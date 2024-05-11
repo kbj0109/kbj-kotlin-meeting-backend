@@ -7,6 +7,6 @@ import org.springframework.boot.runApplication
 class MeetingApplication
 
 fun main(args: Array<String>) {
-	runApplication<MeetingApplication>(*args)
-	System.out.println( 111)
+    runApplication<MeetingApplication>(*args)
+    System.out.println(111)
 }
