@@ -5,6 +5,8 @@ import com.kbj.meeting.annotation.UserAuthGuard
 import com.kbj.meeting.constant.PagingOptionDTO
 import com.kbj.meeting.service.MatchingService
 import com.kbj.meeting.type.LoginUserData
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/matchinges")
 @Tag(name = "matchinges")
 class MatchingController(private val matchingService: MatchingService) {
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
     @UserAuthGuard()
     @GetMapping("/list")
     fun readManyMatchinges(

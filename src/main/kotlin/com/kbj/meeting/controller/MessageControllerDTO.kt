@@ -33,3 +33,8 @@ data class MessageResponse(
     var text: String,
     var reason: String?,
 )
+
+data class MessagesResponse(
+    var totalCount: Int,
+    var list: List<MessageResponse>,
+)

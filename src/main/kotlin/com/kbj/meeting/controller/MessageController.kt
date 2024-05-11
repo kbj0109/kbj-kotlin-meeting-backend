@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -56,7 +57,7 @@ class MessageController(
     @UserAuthGuard()
     @PostMapping("/{messageId}/confirm")
     @Transactional
-    fun updateStatus(
+    fun confirmMessage(
         @PathVariable messageId: Long,
         @Valid @RequestBody data: MessageConfirmRequest,
         @LoginUser() loginUser: LoginUserData,
@@ -81,5 +82,29 @@ class MessageController(
             text = item.text,
             reason = item.reason,
         )
+    }
+
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
+    @UserAuthGuard()
+    @GetMapping("/sent")
+    @Transactional
+    fun readManySentMessages(
+        @LoginUser() loginUser: LoginUserData,
+    ): MessagesResponse {
+        return null as MessagesResponse
+    }
+
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
+    @UserAuthGuard()
+    @GetMapping("/received")
+    @Transactional
+    fun readManyReceivedMessages(
+        @LoginUser() loginUser: LoginUserData,
+    ): MessagesResponse {
+        return null as MessagesResponse
     }
 }

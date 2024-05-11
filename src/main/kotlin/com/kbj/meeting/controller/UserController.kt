@@ -4,6 +4,8 @@ import com.kbj.meeting.annotation.LoginUser
 import com.kbj.meeting.annotation.UserAuthGuard
 import com.kbj.meeting.service.UserService
 import com.kbj.meeting.type.LoginUserData
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.apache.coyote.BadRequestException
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(private val userService: UserService) {
     @PostMapping
     fun createUser(
-        @Valid @RequestBody data: CreateUserRequest,
+        @Valid @RequestBody data: UserCreateRequest,
     ): UserResponse {
         val newUser = userService.createUser(data)
 
@@ -40,6 +42,9 @@ class UserController(private val userService: UserService) {
         )
     }
 
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
     @UserAuthGuard()
     @GetMapping("/{userId}")
     fun readUser(
@@ -64,6 +69,9 @@ class UserController(private val userService: UserService) {
         )
     }
 
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
     @UserAuthGuard()
     @Transactional
     @PutMapping("/{userId}")

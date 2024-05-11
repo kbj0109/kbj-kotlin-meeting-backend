@@ -1,6 +1,6 @@
 package com.kbj.meeting
 
-import com.kbj.meeting.controller.CreateUserRequest
+import com.kbj.meeting.controller.UserCreateRequest
 import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.util.JsonUtil
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +26,7 @@ class UserTest {
     @DisplayName("POST /users")
     fun createUserTest() {
         val data =
-            CreateUserRequest(
+            UserCreateRequest(
                 username = "sample",
                 password = "sample",
                 name = "sample",

@@ -2,8 +2,8 @@ package com.kbj.meeting.service
 
 import com.kbj.meeting.constant.ConflictException
 import com.kbj.meeting.constant.NotFoundException
-import com.kbj.meeting.controller.CreateUserRequest
 import com.kbj.meeting.controller.UpdateeUserRequest
+import com.kbj.meeting.controller.UserCreateRequest
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.repository.entity.User
@@ -18,7 +18,7 @@ class UserService(
     private val encryptUtil: EncryptUtil,
     private val convertUtil: ConvertUtil,
 ) {
-    fun createUser(data: CreateUserRequest): User {
+    fun createUser(data: UserCreateRequest): User {
         val orgUser = userRepository.findByUsername(data.username)
 
         if (orgUser != null) {
