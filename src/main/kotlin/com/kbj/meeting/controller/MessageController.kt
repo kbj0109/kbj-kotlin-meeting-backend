@@ -6,6 +6,8 @@ import com.kbj.meeting.repository.entity.MessageStatusEnum
 import com.kbj.meeting.service.MessageService
 import com.kbj.meeting.type.LoginUserData
 import com.kbj.meeting.util.ConvertUtil
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.transaction.annotation.Transactional
@@ -22,6 +24,9 @@ class MessageController(
     private val messageService: MessageService,
     private val convertUtil: ConvertUtil,
 ) {
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
     @UserAuthGuard()
     @PostMapping("/send")
     @Transactional
@@ -45,6 +50,9 @@ class MessageController(
         )
     }
 
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
     @UserAuthGuard()
     @PostMapping("/{messageId}/confirm")
     @Transactional

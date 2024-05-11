@@ -4,6 +4,8 @@ import com.kbj.meeting.annotation.LoginUser
 import com.kbj.meeting.annotation.UserAuthGuard
 import com.kbj.meeting.service.AuthService
 import com.kbj.meeting.type.LoginUserData
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,6 +28,9 @@ class AuthController(
         return loginResult
     }
 
+    @SecurityRequirements(
+        SecurityRequirement(name = "Authorization"),
+    )
     @UserAuthGuard(allowExpiredToken = true)
     @PostMapping("/renew")
     fun renewAccessToken(
