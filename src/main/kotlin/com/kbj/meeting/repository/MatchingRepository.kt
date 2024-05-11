@@ -5,4 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface MatchingRepository : JpaRepository<Matching, Long>
+interface MatchingRepository : JpaRepository<Matching, Long> {
+    fun readOneByUserIdAndMatchingUserId(
+        userId: Long,
+        matchingUserId: Long,
+    ): Matching?
+}
