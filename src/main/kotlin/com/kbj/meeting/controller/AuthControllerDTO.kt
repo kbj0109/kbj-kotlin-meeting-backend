@@ -1,0 +1,17 @@
+@file:Suppress("ktlint:standard:filename")
+
+package com.kbj.meeting.controller
+
+import jakarta.validation.constraints.Size
+
+data class AuthLoginRequest(
+    @field:Size(min = 5, max = 20)
+    var username: String,
+    @field:Size(min = 5, max = 20)
+    var password: String,
+)
+
+data class AuthLoginResponse(
+    var accessToken: String,
+    var refreshToken: String,
+)

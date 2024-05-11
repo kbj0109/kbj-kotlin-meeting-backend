@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(private val userService: UserService) {
     @PostMapping
     fun createUser(
-        @Valid @RequestBody user: CreateUserRequest,
+        @Valid @RequestBody data: CreateUserRequest,
     ): UserResponse {
-        val newUser = userService.createUser(user)
+        val newUser = userService.createUser(data)
 
         return UserResponse(
             id = newUser.id,

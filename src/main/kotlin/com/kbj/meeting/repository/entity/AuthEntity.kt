@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 import java.util.Date
 
 enum class AuthTypeEnum(val value: String) {
@@ -27,7 +28,7 @@ class AuthData {
 class Auth(
     userId: Long,
     authType: AuthTypeEnum,
-    expiredAt: Date,
+    expiredAt: LocalDateTime,
     data: Any,
 ) {
     @Id
@@ -45,7 +46,7 @@ class Auth(
     var authType: AuthTypeEnum = authType
 
     @Column()
-    var expiredAt: Date = expiredAt
+    var expiredAt: LocalDateTime = expiredAt
 
     @Column
     @Convert(converter = MapToJsonConverter::class)
@@ -57,11 +58,11 @@ class MapToJsonConverter : AttributeConverter<Any?, String?> { // Change the typ
     private val jsonUtil by lazy { JsonUtil() } // Lazily initialize JsonUtil
 
     override fun convertToDatabaseColumn(attribute: Any?): String? {
-        return JsonUtil().stringify(attribute)
+        return jsonUtil.stringify(attribute)
     }
 
     override fun convertToEntityAttribute(dbData: String?): Any? {
         if (dbData == null) return {}
-        return JsonUtil().parse(dbData)
+        return jsonUtil.parse(dbData)
     }
 }

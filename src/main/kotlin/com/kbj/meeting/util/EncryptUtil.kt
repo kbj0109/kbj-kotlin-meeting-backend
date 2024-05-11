@@ -5,7 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class EncryptUtil {
-    val encryptor: PasswordEncoder = BCryptPasswordEncoder(12)
+    private val encryptor: PasswordEncoder = BCryptPasswordEncoder(12)
 
     @Value("\${SecretEncryptKey}")
     private lateinit var secretEncryptKey: String

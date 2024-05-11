@@ -3,6 +3,8 @@ package com.kbj.meeting.config
 import com.kbj.meeting.util.ConvertUtil
 import com.kbj.meeting.util.EncryptUtil
 import com.kbj.meeting.util.JsonUtil
+import com.kbj.meeting.util.JwtUtil
+import com.kbj.meeting.util.RandomUtil
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -21,5 +23,15 @@ class UtilConfig {
     @Bean
     fun jsonUtil(): JsonUtil {
         return JsonUtil()
+    }
+
+    @Bean
+    fun jwtUtil(): JwtUtil {
+        return JwtUtil()
+    }
+
+    @Bean
+    fun randomUtil(): RandomUtil {
+        return RandomUtil()
     }
 }
