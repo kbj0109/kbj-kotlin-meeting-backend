@@ -16,7 +16,7 @@ annotation class UserAuthGuard(
 
 @Aspect
 @Component
-class UserAuthGuardAspect(private val request: HttpServletRequest, private val jwtUtil: JwtUtil) {
+private class UserAuthGuardAspect(private val request: HttpServletRequest, private val jwtUtil: JwtUtil) {
     @Before("@annotation(userAuthGuard)")
     fun openJwtToken(userAuthGuard: UserAuthGuard) {
         val allowEmptyToken = userAuthGuard.allowEmptyToken

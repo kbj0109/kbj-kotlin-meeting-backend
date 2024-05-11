@@ -1,6 +1,6 @@
 package com.kbj.meeting.repository.entity
 
-import com.kbj.meeting.util.JsonUtil
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
@@ -19,8 +19,8 @@ enum class AuthTypeEnum(val value: String) {
     RefreshToken("RefreshToken"),
 }
 
-class AuthData {
-    data class RefreshToken(val refreshToken: String)
+sealed class AuthData {
+    data class RefreshToken(val refreshToken: String) : AuthData()
 }
 
 @Entity
@@ -29,7 +29,7 @@ class Auth(
     userId: Long,
     authType: AuthTypeEnum,
     expiredAt: LocalDateTime,
-    data: Any,
+    data: AuthData,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,20 +49,20 @@ class Auth(
     var expiredAt: LocalDateTime = expiredAt
 
     @Column
-    @Convert(converter = MapToJsonConverter::class)
-    var data: Any? = data
+    @Convert(converter = AuthJsonConverter::class)
+    var data: AuthData = data
 }
 
 @Converter
-class MapToJsonConverter : AttributeConverter<Any?, String?> { // Change the type to Any?
-    private val jsonUtil by lazy { JsonUtil() } // Lazily initialize JsonUtil
+class AuthJsonConverter : AttributeConverter<Any?, String?> { // Change the type to Any?
+    val objectMapper = jacksonObjectMapper()
 
-    override fun convertToDatabaseColumn(attribute: Any?): String? {
-        return jsonUtil.stringify(attribute)
+    override fun convertToDatabaseColumn(data: Any?): String? {
+        return objectMapper.writeValueAsString(data)
     }
 
     override fun convertToEntityAttribute(dbData: String?): Any? {
-        if (dbData == null) return {}
-        return jsonUtil.parse(dbData)
+        if (dbData == null) return null
+        return objectMapper.readValue(dbData, AuthData.RefreshToken::class.java)
     }
 }

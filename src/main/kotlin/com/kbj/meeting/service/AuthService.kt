@@ -51,7 +51,7 @@ class AuthService(
                     userId = user.id,
                     authType = AuthTypeEnum.RefreshToken,
                     expiredAt = refreshExpireAt,
-                    data = mapOf("refreshToken" to refreshToken),
+                    data = AuthData.RefreshToken(refreshToken),
                 ),
             )
 
@@ -79,7 +79,7 @@ class AuthService(
     ): AuthRenewResponse {
         val auth = this.authRepository.findById(authId).orElseThrow { NotFoundException() }
 
-        if ((auth.data as AuthData.RefreshToken).refreshToken !== refreshToken) {
+        if ((auth.data as AuthData.RefreshToken).refreshToken != refreshToken) {
             throw InvalidTokenException()
         }
 
@@ -108,7 +108,7 @@ class AuthService(
                         userId = user.id,
                         authType = AuthTypeEnum.RefreshToken,
                         expiredAt = nweRefreshExpireAt,
-                        data = mapOf("refreshToken" to newRefreshToken),
+                        data = AuthData.RefreshToken(newRefreshToken),
                     ),
                 )
 
