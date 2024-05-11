@@ -5,6 +5,7 @@ import com.kbj.meeting.controller.CreateUserDTO
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.repository.entity.User
+import com.kbj.meeting.util.ConvertUtil
 import com.kbj.meeting.util.EncryptUtil
 import org.springframework.stereotype.Service
 import kotlin.NoSuchElementException
@@ -13,6 +14,7 @@ import kotlin.NoSuchElementException
 class UserService(
     private val userRepository: UserRepository,
     private val encryptUtil: EncryptUtil,
+    private val convertUtil: ConvertUtil,
 ) {
     fun createUser(data: CreateUserDTO): User {
         val orgUser = userRepository.findByUsername(data.username)
@@ -26,7 +28,7 @@ class UserService(
                 username = data.username,
                 password = encryptUtil.encryptPassword(data.password),
                 name = data.name,
-                gender = data.gender as GenderEnum,
+                gender = convertUtil.getEnumValueOrNull<GenderEnum>(data.gender),
                 email = data.email,
                 phone = data.phone,
                 birth = data.birth,

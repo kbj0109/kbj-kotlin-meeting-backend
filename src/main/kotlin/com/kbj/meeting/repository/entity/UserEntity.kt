@@ -2,6 +2,8 @@ package com.kbj.meeting.repository.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -47,14 +49,15 @@ class User(
     var name: String? = name
 
     @Column
-    var gender: GenderEnum? = null
+    @Enumerated(EnumType.STRING)
+    var gender: GenderEnum? = gender
 
     @Column
-    var email: String? = null
+    var email: String? = email
 
     @Column
-    var phone: String? = null
+    var phone: String? = phone
 
     @Column
-    var birth: String? = null
+    var birth: String? = birth
 }

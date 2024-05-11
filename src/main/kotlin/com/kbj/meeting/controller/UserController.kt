@@ -17,8 +17,6 @@ class UserController(private val userService: UserService) {
     fun createUser(
         @Valid @RequestBody user: CreateUserDTO,
     ): ResponseEntity<User> {
-        println(12345)
-
         val newUser = userService.createUser(user)
 
         return ResponseEntity(newUser, HttpStatus.CREATED)
