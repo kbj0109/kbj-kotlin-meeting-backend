@@ -1,10 +1,10 @@
 package com.kbj.meeting.service
 
+import com.kbj.meeting.constant.ConflictException
 import com.kbj.meeting.controller.CreateUserDTO
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.User
 import com.kbj.meeting.util.EncryptUtil
-import org.apache.coyote.BadRequestException
 import org.springframework.stereotype.Service
 import kotlin.NoSuchElementException
 
@@ -17,7 +17,7 @@ class UserService(
         val orgUser = userRepository.findByUsername(data.username)
 
         if (orgUser != null) {
-            throw BadRequestException()
+            throw ConflictException()
         }
 
         val user =
