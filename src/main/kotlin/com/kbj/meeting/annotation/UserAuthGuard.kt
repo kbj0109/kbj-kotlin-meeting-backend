@@ -3,10 +3,12 @@ package com.kbj.meeting.annotation
 import com.kbj.meeting.constant.UnauthorizedException
 import com.kbj.meeting.util.JwtUtil
 import jakarta.servlet.http.HttpServletRequest
-import org.aspectj.lang.annotation.Aspect
-import org.aspectj.lang.annotation.Before
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Component
+import org.springframework.web.method.HandlerMethod
+import org.springframework.web.servlet.HandlerInterceptor
 
+// Set UserAuthGuard Interceptor
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class UserAuthGuard(
@@ -14,13 +16,20 @@ annotation class UserAuthGuard(
     val allowExpiredToken: Boolean = false,
 )
 
-@Aspect
 @Component
-private class UserAuthGuardAspect(private val request: HttpServletRequest, private val jwtUtil: JwtUtil) {
-    @Before("@annotation(userAuthGuard)")
-    fun openJwtToken(userAuthGuard: UserAuthGuard) {
-        val allowEmptyToken = userAuthGuard.allowEmptyToken
-        val allowExpiredToken = userAuthGuard.allowExpiredToken
+class UserAuthGuardInterceptor(private val jwtUtil: JwtUtil) : HandlerInterceptor {
+    override fun preHandle(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any,
+    ): Boolean {
+        if (handler !is HandlerMethod) return true
+        if (handler.getMethodAnnotation(UserAuthGuard::class.java) == null) return true
+
+        val option = handler.method.getAnnotation(UserAuthGuard::class.java)
+
+        val allowEmptyToken = option.allowEmptyToken
+        val allowExpiredToken = option.allowExpiredToken
 
         val token = request.getHeader("Authorization")?.removePrefix("Bearer ")
 
@@ -29,11 +38,13 @@ private class UserAuthGuardAspect(private val request: HttpServletRequest, priva
         }
 
         if (allowEmptyToken == true && token.isNullOrEmpty()) {
-            return
+            return true
         }
 
-        val loginData = jwtUtil.openUserJwtToken(token as String, allowExpiredToken)
+        val loginUserData = jwtUtil.openUserJwtToken(token as String, allowExpiredToken)
 
-        request.setAttribute("loginUser", loginData)
+        request.setAttribute("loginUser", loginUserData)
+
+        return true
     }
 }
