@@ -2,7 +2,7 @@ package com.kbj.meeting.util
 
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
+import java.util.Date
 
 class ConvertUtil {
     inline fun <reified T : Enum<T>> getEnumValueOrNull(name: String?): T? =
