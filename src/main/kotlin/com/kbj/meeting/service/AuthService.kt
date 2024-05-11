@@ -12,6 +12,7 @@ import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.Auth
 import com.kbj.meeting.repository.entity.AuthData
 import com.kbj.meeting.repository.entity.AuthTypeEnum
+import com.kbj.meeting.type.LoginUserData
 import com.kbj.meeting.util.ConvertUtil
 import com.kbj.meeting.util.EncryptUtil
 import com.kbj.meeting.util.JwtUtil
@@ -55,10 +56,10 @@ class AuthService(
             )
 
         val jwtData =
-            mapOf(
-                "userId" to user.id,
-                "username" to user.username,
-                "authId" to auth.id,
+            LoginUserData(
+                user.id,
+                user.username,
+                auth.id,
             )
 
         val accessTokenExpireLocalDateTime = LocalDateTime.now().plusMinutes(accessTokenExpireMinutes.toLong())
@@ -117,10 +118,10 @@ class AuthService(
         val accessTokenExpireLocalDateTime = LocalDateTime.now().plusMinutes(accessTokenExpireMinutes.toLong())
         val accessToken =
             jwtUtil.createUserJwtToken(
-                mapOf(
-                    "userId" to user.id,
-                    "username" to user.username,
-                    "authId" to newAuthId,
+                LoginUserData(
+                    user.id,
+                    user.username,
+                    auth.id,
                 ),
                 convertUtil.getDateFromLocalDateTime(accessTokenExpireLocalDateTime),
             )

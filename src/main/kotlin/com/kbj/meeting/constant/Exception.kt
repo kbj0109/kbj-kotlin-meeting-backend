@@ -8,6 +8,7 @@ enum class ExceptionEnum(val status: Int, val message: String) {
     BadRequestException(HttpStatus.BAD_REQUEST.value(), "BadRequest"), // 400
     InvalidTokenException(HttpStatus.UNAUTHORIZED.value(), "InvalidToken"), // 401
     ExpiredTokenException(HttpStatus.UNAUTHORIZED.value(), "ExpiredToken"), // 401
+    UnauthorizedException(HttpStatus.UNAUTHORIZED.value(), "Unauthorized"), // 401
     ForbiddenException(HttpStatus.FORBIDDEN.value(), "Forbidden"), // 403
     NotFoundException(HttpStatus.NOT_FOUND.value(), "NotFound"), // 404
     ConflictException(HttpStatus.CONFLICT.value(), "Conflict"), // 409
@@ -33,6 +34,9 @@ class InvalidTokenException(message: String? = null, data: Map<String, Any>? = n
 
 class ExpiredTokenException(message: String? = null, data: Map<String, Any>? = null) :
     CustomException(ExceptionEnum.ExpiredTokenException, message, data)
+
+class UnauthorizedException(message: String? = null, data: Map<String, Any>? = null) :
+    CustomException(ExceptionEnum.UnauthorizedException, message, data)
 
 class ForbiddenException(message: String? = null, data: Map<String, Any>? = null) :
     CustomException(ExceptionEnum.ForbiddenException, message, data)
