@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.util.Date
 
@@ -60,4 +61,7 @@ class User(
 
     @Column
     var birth: String? = birth
+
+    @OneToMany(mappedBy = "fromUser")
+    var sentMessages: MutableList<Message> = mutableListOf()
 }

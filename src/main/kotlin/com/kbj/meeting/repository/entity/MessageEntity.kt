@@ -4,9 +4,12 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.util.Date
 
@@ -45,10 +48,10 @@ class Message(
     @Column
     var deletedAt: Date? = null
 
-    @Column
+    @Column(name = "from_user_id", insertable = false, updatable = false)
     var fromUserId: Long = fromUserId
 
-    @Column
+    @Column(name = "to_user_id", insertable = false, updatable = false)
     var toUserId: Long = toUserId
 
     @Column(columnDefinition = "INT")
@@ -63,4 +66,12 @@ class Message(
 
     @Column
     var reason: String? = reason
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_user_id")
+    var fromUser: User? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_user_id")
+    var toUser: User? = null
 }
