@@ -16,20 +16,23 @@ annotation class UserAuthGuard(
 
 @Aspect
 @Component
-private class UserAuthGuardAspect(private val request: HttpServletRequest, private val jwtUtil: JwtUtil) {
-    @Before("@annotation(option)")
-    fun openJwtToken(option: UserAuthGuard) {
+class UserAuthGuardAspect(private val request: HttpServletRequest, private val jwtUtil: JwtUtil) {
+    @Before("@annotation(userAuthGuard)")
+    fun openJwtToken(userAuthGuard: UserAuthGuard) {
+        val allowEmptyToken = userAuthGuard.allowEmptyToken
+        val allowExpiredToken = userAuthGuard.allowExpiredToken
+
         val token = request.getHeader("Authorization")?.removePrefix("Bearer ")
 
-        if (option.allowEmptyToken == false && token.isNullOrEmpty()) {
+        if (allowEmptyToken == false && token.isNullOrEmpty()) {
             throw UnauthorizedException(message = "Login Required")
         }
 
-        if (option.allowEmptyToken == true && token.isNullOrEmpty()) {
+        if (allowEmptyToken == true && token.isNullOrEmpty()) {
             return
         }
 
-        val loginData = jwtUtil.openUserJwtToken(token as String, option.allowExpiredToken)
+        val loginData = jwtUtil.openUserJwtToken(token as String, allowExpiredToken)
 
         request.setAttribute("loginUser", loginData)
     }
