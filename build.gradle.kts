@@ -21,19 +21,22 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    implementation("com.mysql:mysql-connector-j")
     implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    implementation("org.flywaydb:flyway-core")
-    implementation("org.flywaydb:flyway-mysql")
-    implementation("org.springframework.security:spring-security-crypto")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.2.4")
+    implementation("com.mysql:mysql-connector-j:8.3.0")
+    implementation("org.flywaydb:flyway-core:9.22.3")
+    implementation("org.flywaydb:flyway-mysql:9.22.3")
+
+    implementation("org.springframework.security:spring-security-crypto:6.2.1")
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.2.1")
+
+    implementation(("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"))
 }
 
 tasks.withType<KotlinCompile> {
