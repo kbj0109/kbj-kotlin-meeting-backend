@@ -29,7 +29,7 @@ data class UserCreateRequest(
     val birth: String?,
 )
 
-data class UpdateeUserRequest(
+data class UpdateUserRequest(
     @field:Size(min = 5, max = 20)
     var password: String,
     @field:Size(min = 2)

@@ -2,7 +2,7 @@ package com.kbj.meeting.service
 
 import com.kbj.meeting.constant.ConflictException
 import com.kbj.meeting.constant.NotFoundException
-import com.kbj.meeting.controller.UpdateeUserRequest
+import com.kbj.meeting.controller.UpdateUserRequest
 import com.kbj.meeting.controller.UserCreateRequest
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.GenderEnum
@@ -45,7 +45,7 @@ class UserService(
 
     fun updateUser(
         userId: Long,
-        data: UpdateeUserRequest,
+        data: UpdateUserRequest,
     ): User {
         val item = userRepository.findById(userId).orElseThrow { NotFoundException() }
 
