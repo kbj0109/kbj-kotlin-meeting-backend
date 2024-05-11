@@ -8,5 +8,4 @@ class MeetingApplication
 
 fun main(args: Array<String>) {
     runApplication<MeetingApplication>(*args)
-    System.out.println(111)
 }
