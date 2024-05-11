@@ -9,8 +9,8 @@ import jakarta.persistence.Table
 import java.util.Date
 
 enum class GenderEnum(val value: String) {
-    Male("male"),
-    Female("female"),
+    Male("Male"),
+    Female("Female"),
 }
 
 @Entity

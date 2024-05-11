@@ -3,6 +3,7 @@ package com.kbj.meeting.service
 import com.kbj.meeting.constant.ConflictException
 import com.kbj.meeting.controller.CreateUserDTO
 import com.kbj.meeting.repository.UserRepository
+import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.repository.entity.User
 import com.kbj.meeting.util.EncryptUtil
 import org.springframework.stereotype.Service
@@ -25,7 +26,7 @@ class UserService(
                 username = data.username,
                 password = encryptUtil.encryptPassword(data.password),
                 name = data.name,
-                gender = data.gender,
+                gender = data.gender as GenderEnum,
                 email = data.email,
                 phone = data.phone,
                 birth = data.birth,
