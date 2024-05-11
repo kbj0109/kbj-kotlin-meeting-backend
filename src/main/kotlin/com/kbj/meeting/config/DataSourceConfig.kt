@@ -12,7 +12,6 @@ class DataSourceConfig {
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource")
     fun dataSource(): DataSource {
-        // return DataSourceBuilder.create().username('sample').password('password').build()
         return DataSourceBuilder.create().build()
     }
 }
