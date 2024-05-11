@@ -8,7 +8,6 @@ import javax.sql.DataSource
 
 @Configuration
 class DataSourceConfig {
-    // fun dataSource(): DataSource = DataSourceBuilder.create().build()
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource")
     fun dataSource(): DataSource {
