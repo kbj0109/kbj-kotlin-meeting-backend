@@ -121,13 +121,13 @@ class AuthService(
                 LoginUserData(
                     user.id,
                     user.username,
-                    auth.id,
+                    newAuthId,
                 ),
                 convertUtil.getDateFromLocalDateTime(accessTokenExpireLocalDateTime),
             )
 
         if (isRenewRefresh) {
-            return AuthRenewResponse(accessToken, refreshToken)
+            return AuthRenewResponse(accessToken, newRefreshToken)
         }
 
         return AuthRenewResponse(accessToken)
