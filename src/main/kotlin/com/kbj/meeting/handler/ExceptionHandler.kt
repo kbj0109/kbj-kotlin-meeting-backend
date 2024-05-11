@@ -1,7 +1,7 @@
 package com.kbj.meeting.handler
 
 import com.kbj.meeting.constant.CustomException
-import com.kbj.meeting.constant.ResultCode
+import com.kbj.meeting.constant.ExceptionEnum
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
@@ -15,11 +15,11 @@ import java.time.format.DateTimeFormatter
 
 @RestControllerAdvice
 class ExceptionHandler {
-    var defaultException = ResultCode.InternalServerException
+    var defaultException = ExceptionEnum.InternalServerException
 
     data class ExceptionResponse(
-        val status: Int = ResultCode.InternalServerException.status,
-        val type: String = ResultCode.InternalServerException.name,
+        val status: Int = ExceptionEnum.InternalServerException.status,
+        val type: String = ExceptionEnum.InternalServerException.name,
         val message: String? = null,
         val data: Map<String, Any>? = mutableMapOf(),
         val responseTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
@@ -29,7 +29,7 @@ class ExceptionHandler {
     // 유효성 검증 실패시 Exception Handling
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleBadParameterException(ex: MethodArgumentNotValidException): ResponseEntity<ExceptionResponse> {
-        val badParamException = ResultCode.BadParameterRequestException
+        val badParamException = ExceptionEnum.BadParameterRequestException
 
         val badParamList =
             ((ex.bindingResult.allErrors) as List<FieldError>).map { it.field }

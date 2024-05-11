@@ -3,7 +3,7 @@ package com.kbj.meeting.constant
 import org.springframework.http.HttpStatus
 
 // 발생 가능한 Exception
-enum class ResultCode(val status: Int, val message: String) {
+enum class ExceptionEnum(val status: Int, val message: String) {
     BadParameterRequestException(HttpStatus.BAD_REQUEST.value(), "BadParameterRequest"), // 400
     BadRequestException(HttpStatus.BAD_REQUEST.value(), "BadRequest"), // 400
     InvalidTokenException(HttpStatus.UNAUTHORIZED.value(), "InvalidToken"), // 401
@@ -16,7 +16,7 @@ enum class ResultCode(val status: Int, val message: String) {
 
 // Exception 기본 형태
 open class CustomException(
-    info: ResultCode,
+    info: ExceptionEnum,
     message: String? = null,
     val data: Map<String, Any>? = null,
 ) :
@@ -26,25 +26,25 @@ open class CustomException(
 }
 
 class BadParameterRequestException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.BadParameterRequestException, message, data)
+    CustomException(ExceptionEnum.BadParameterRequestException, message, data)
 
 class InvalidTokenException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.InvalidTokenException, message, data)
+    CustomException(ExceptionEnum.InvalidTokenException, message, data)
 
 class ExpiredTokenException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.ExpiredTokenException, message, data)
+    CustomException(ExceptionEnum.ExpiredTokenException, message, data)
 
 class ForbiddenException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.ForbiddenException, message, data)
+    CustomException(ExceptionEnum.ForbiddenException, message, data)
 
 class BadRequestException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.BadRequestException, message, data)
+    CustomException(ExceptionEnum.BadRequestException, message, data)
 
 class NotFoundException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.NotFoundException, message, data)
+    CustomException(ExceptionEnum.NotFoundException, message, data)
 
 class ConflictException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.ConflictException, message, data)
+    CustomException(ExceptionEnum.ConflictException, message, data)
 
 class InternalServerException(message: String? = null, data: Map<String, Any>? = null) :
-    CustomException(ResultCode.InternalServerException, message, data)
+    CustomException(ExceptionEnum.InternalServerException, message, data)
