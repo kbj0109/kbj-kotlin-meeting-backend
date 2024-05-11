@@ -1,6 +1,10 @@
 package com.kbj.meeting.repository.entity
 
+import com.kbj.meeting.util.JsonUtil
+import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Column
+import jakarta.persistence.Convert
+import jakarta.persistence.Converter
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -14,12 +18,17 @@ enum class AuthTypeEnum(val value: String) {
     RefreshToken("RefreshToken"),
 }
 
+class AuthData {
+    data class RefreshToken(val refreshToken: String)
+}
+
 @Entity
 @Table(name = "auths", schema = "kbj_meeting_backend")
 class Auth(
     userId: Long,
     authType: AuthTypeEnum,
     expiredAt: Date,
+    data: Any,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +46,22 @@ class Auth(
 
     @Column()
     var expiredAt: Date = expiredAt
+
+    @Column
+    @Convert(converter = MapToJsonConverter::class)
+    var data: Any? = data
+}
+
+@Converter
+class MapToJsonConverter : AttributeConverter<Any?, String?> { // Change the type to Any?
+    private val jsonUtil by lazy { JsonUtil() } // Lazily initialize JsonUtil
+
+    override fun convertToDatabaseColumn(attribute: Any?): String? {
+        return JsonUtil().stringify(attribute)
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): Any? {
+        if (dbData == null) return {}
+        return JsonUtil().parse(dbData)
+    }
 }

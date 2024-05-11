@@ -36,7 +36,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-crypto:6.2.1")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.2.1")
 
-    implementation(("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"))
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 }
 
 tasks.withType<KotlinCompile> {
