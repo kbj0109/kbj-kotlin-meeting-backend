@@ -2,6 +2,7 @@ package com.kbj.meeting.controller
 
 import com.kbj.meeting.annotation.LoginUser
 import com.kbj.meeting.annotation.UserAuthGuard
+import com.kbj.meeting.constant.PagingOptionDTO
 import com.kbj.meeting.repository.entity.MessageStatusEnum
 import com.kbj.meeting.service.MessageService
 import com.kbj.meeting.type.LoginUserData
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.PageRequest
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -91,9 +93,44 @@ class MessageController(
     @GetMapping("/sent")
     @Transactional
     fun readManySentMessages(
+        @Valid pagingOption: PagingOptionDTO,
         @LoginUser() loginUser: LoginUserData,
     ): MessagesResponse {
-        return null as MessagesResponse
+        val pageRequest = PageRequest.of(pagingOption.pageNumber, pagingOption.pageSize)
+        val (totalCount, list) = messageService.readManyAndTotalCountSentWithUsers(loginUser.userId, pageRequest)
+
+        val newList =
+            list.map { message ->
+                MessageUserResponse(
+                    id = message.id!!,
+                    createdAt = message.createdAt,
+                    updatedAt = message.updatedAt,
+                    deletedAt = message.deletedAt,
+                    fromUserId = message.fromUserId,
+                    toUserId = message.toUserId,
+                    messageLevel = message.messageLevel,
+                    messageStatus = message.messageStatus,
+                    text = message.text,
+                    reason = message.reason,
+                    user =
+                        message.toUser?.let { user ->
+                            UserResponse(
+                                id = user.id,
+                                createdAt = user.createdAt,
+                                updatedAt = user.updatedAt,
+                                deletedAt = user.deletedAt,
+                                username = user.username,
+                                name = user.name,
+                                gender = user.gender,
+                                email = user.email,
+                                phone = user.phone,
+                                birth = user.birth,
+                            )
+                        },
+                )
+            }
+
+        return MessagesResponse(totalCount, newList)
     }
 
     @SecurityRequirements(
@@ -103,8 +140,43 @@ class MessageController(
     @GetMapping("/received")
     @Transactional
     fun readManyReceivedMessages(
+        @Valid pagingOption: PagingOptionDTO,
         @LoginUser() loginUser: LoginUserData,
     ): MessagesResponse {
-        return null as MessagesResponse
+        val pageRequest = PageRequest.of(pagingOption.pageNumber, pagingOption.pageSize)
+        val (totalCount, list) = messageService.readManyAndTotalCountReceivedWithUsers(loginUser.userId, pageRequest)
+
+        val newList =
+            list.map { message ->
+                MessageUserResponse(
+                    id = message.id!!,
+                    createdAt = message.createdAt,
+                    updatedAt = message.updatedAt,
+                    deletedAt = message.deletedAt,
+                    fromUserId = message.fromUserId,
+                    toUserId = message.toUserId,
+                    messageLevel = message.messageLevel,
+                    messageStatus = message.messageStatus,
+                    text = message.text,
+                    reason = message.reason,
+                    user =
+                        message.fromUser?.let { user ->
+                            UserResponse(
+                                id = user.id,
+                                createdAt = user.createdAt,
+                                updatedAt = user.updatedAt,
+                                deletedAt = user.deletedAt,
+                                username = user.username,
+                                name = user.name,
+                                gender = user.gender,
+                                email = user.email,
+                                phone = user.phone,
+                                birth = user.birth,
+                            )
+                        },
+                )
+            }
+
+        return MessagesResponse(totalCount, newList)
     }
 }

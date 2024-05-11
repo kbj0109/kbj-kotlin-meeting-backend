@@ -4,6 +4,8 @@ package com.kbj.meeting.repository
 
 import com.kbj.meeting.repository.entity.Message
 import com.kbj.meeting.repository.entity.MessageStatusEnum
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -40,4 +42,22 @@ interface MessageRepository : JpaRepository<Message, Long> {
         @Param("messageStatus") messageStatus: MessageStatusEnum,
         @Param("reason") reason: String?,
     ): Int
+
+    @Query(
+        "SELECT m FROM Message m LEFT JOIN User u ON u.id = m.fromUserId " +
+            "WHERE m.fromUserId = :userId",
+    )
+    fun readManyAndTotalCountSentWithUsers(
+        @Param("userId") userId: Long,
+        pageRequest: PageRequest,
+    ): Page<Message>
+
+    @Query(
+        "SELECT m FROM Message m LEFT JOIN User u ON u.id = m.toUserId " +
+            "WHERE m.toUserId = :userId",
+    )
+    fun readManyAndTotalCountReceivedWithUsers(
+        @Param("userId") userId: Long,
+        pageRequest: PageRequest,
+    ): Page<Message>
 }

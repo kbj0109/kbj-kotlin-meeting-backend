@@ -34,7 +34,21 @@ data class MessageResponse(
     var reason: String?,
 )
 
+data class MessageUserResponse(
+    var id: Long,
+    var createdAt: Date,
+    var updatedAt: Date,
+    var deletedAt: Date?,
+    var fromUserId: Long,
+    var toUserId: Long,
+    var messageLevel: MessageLevelEnum,
+    var messageStatus: MessageStatusEnum,
+    var text: String,
+    var reason: String?,
+    var user: UserResponse?,
+)
+
 data class MessagesResponse(
     var totalCount: Int,
-    var list: List<MessageResponse>,
+    var list: List<MessageUserResponse>,
 )

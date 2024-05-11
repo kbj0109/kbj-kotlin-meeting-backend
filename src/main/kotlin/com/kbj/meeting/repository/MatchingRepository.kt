@@ -15,14 +15,11 @@ interface MatchingRepository : JpaRepository<Matching, Long> {
         matchingUserId: Long,
     ): Matching?
 
-    @Query("SELECT m FROM Matching m LEFT JOIN User u ON u.id = m.matchingUserId WHERE m.userId = :userId")
-    fun readManyWithMatchingUser(userId: Long): List<Matching>
-
     @Query(
         "SELECT m FROM Matching m LEFT JOIN User u ON u.id = m.matchingUserId " +
             "WHERE m.userId = :userId",
     )
-    fun readManyWithMatchingUser2(
+    fun readManyWithMatchingUser(
         @Param("userId") userId: Long,
         pageRequest: PageRequest,
     ): Page<Matching>

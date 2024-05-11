@@ -10,6 +10,7 @@ import com.kbj.meeting.repository.entity.Matching
 import com.kbj.meeting.repository.entity.Message
 import com.kbj.meeting.repository.entity.MessageLevelEnum
 import com.kbj.meeting.repository.entity.MessageStatusEnum
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
@@ -103,5 +104,23 @@ class MessageService(
         }
 
         return this.messageRepository.findById(messageId).orElseThrow { NotFoundException() }
+    }
+
+    fun readManyAndTotalCountSentWithUsers(
+        userId: Long,
+        pageRequest: PageRequest,
+    ): Pair<Int, List<Message>> {
+        val result = this.messageRepository.readManyAndTotalCountSentWithUsers(userId, pageRequest)
+
+        return Pair(result.totalElements.toInt(), result.content)
+    }
+
+    fun readManyAndTotalCountReceivedWithUsers(
+        userId: Long,
+        pageRequest: PageRequest,
+    ): Pair<Int, List<Message>> {
+        val result = this.messageRepository.readManyAndTotalCountReceivedWithUsers(userId, pageRequest)
+
+        return Pair(result.totalElements.toInt(), result.content)
     }
 }
