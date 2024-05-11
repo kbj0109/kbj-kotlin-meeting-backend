@@ -20,8 +20,8 @@ class AuthController(
     fun login(
         @Valid @RequestBody data: AuthLoginRequest,
     ): AuthLoginResponse {
-        val result = authService.login(data)
+        val loginResult = authService.login(data)
 
-        return result
+        return loginResult
     }
 }

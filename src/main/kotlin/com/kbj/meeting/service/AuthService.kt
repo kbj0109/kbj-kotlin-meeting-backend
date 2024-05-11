@@ -28,8 +28,8 @@ class AuthService(
     @Value("\${AccessTokenExpireMinutes}")
     private lateinit var accessTokenExpireMinutes: String
 
-    @Value("\${RefreshTokenExpirDates}")
-    private lateinit var refreshTokenExpirDates: String
+    @Value("\${RefreshTokenExpireDates}")
+    private lateinit var refreshTokenExpireDates: String
 
     fun login(data: AuthLoginRequest): AuthLoginResponse {
         val user = userRepository.findByUsername(data.username) ?: throw NotFoundException()
@@ -37,8 +37,8 @@ class AuthService(
         val isCorrect = encryptUtil.comparePassword(data.password, user.password)
         if (!isCorrect) throw BadRequestException()
 
-        val refreshToken = randomUtil.createRandomString(10)
-        val refreshExpireAt = LocalDateTime.now().plusDays(refreshTokenExpirDates.toLong())
+        val refreshToken = randomUtil.createRandomString(30)
+        val refreshExpireAt = LocalDateTime.now().plusDays(refreshTokenExpireDates.toLong())
 
         val auth =
             authRepository.save(
