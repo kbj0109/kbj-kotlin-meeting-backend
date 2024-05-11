@@ -6,6 +6,7 @@ import com.kbj.meeting.annotation.paramValidator.NumericString
 import com.kbj.meeting.annotation.paramValidator.OneOfValues
 import com.kbj.meeting.constant.Regex.Companion.DATE_REGEX
 import com.kbj.meeting.repository.entity.GenderEnum
+import com.kbj.meeting.repository.entity.User
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
@@ -54,4 +55,21 @@ data class UserResponse(
     val email: String?,
     val phone: String?,
     val birth: String?,
-)
+) {
+    companion object {
+        fun fromUser(user: User): UserResponse {
+            return UserResponse(
+                id = user.id,
+                createdAt = user.createdAt,
+                updatedAt = user.updatedAt,
+                deletedAt = user.deletedAt,
+                username = user.username,
+                name = user.name,
+                gender = user.gender,
+                email = user.email,
+                phone = user.phone,
+                birth = user.birth,
+            )
+        }
+    }
+}

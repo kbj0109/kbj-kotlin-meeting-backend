@@ -26,25 +26,12 @@ class UserController(private val userService: UserService) {
     fun createUser(
         @Valid @RequestBody data: UserCreateRequest,
     ): UserResponse {
-        val newUser = userService.createUser(data)
+        val item = userService.createUser(data)
 
-        return UserResponse(
-            id = newUser.id,
-            createdAt = newUser.createdAt,
-            updatedAt = newUser.updatedAt,
-            deletedAt = newUser.deletedAt,
-            username = newUser.username,
-            name = newUser.name,
-            gender = newUser.gender,
-            email = newUser.email,
-            phone = newUser.phone,
-            birth = newUser.birth,
-        )
+        return UserResponse.fromUser(item)
     }
 
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
     @GetMapping("/{userId}")
     fun readUser(
@@ -53,25 +40,12 @@ class UserController(private val userService: UserService) {
     ): UserResponse {
         if (userId != loginUser.userId) throw BadRequestException()
 
-        val user = userService.getUserById(userId)
+        val item = userService.getUserById(userId)
 
-        return UserResponse(
-            id = user.id,
-            createdAt = user.createdAt,
-            updatedAt = user.updatedAt,
-            deletedAt = user.deletedAt,
-            username = user.username,
-            name = user.name,
-            gender = user.gender,
-            email = user.email,
-            phone = user.phone,
-            birth = user.birth,
-        )
+        return UserResponse.fromUser(item)
     }
 
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
     @Transactional
     @PutMapping("/{userId}")
@@ -84,17 +58,6 @@ class UserController(private val userService: UserService) {
 
         val item = this.userService.updateUser(userId, data)
 
-        return UserResponse(
-            id = item.id,
-            createdAt = item.createdAt,
-            updatedAt = item.updatedAt,
-            deletedAt = item.deletedAt,
-            username = item.username,
-            name = item.name,
-            gender = item.gender,
-            email = item.email,
-            phone = item.phone,
-            birth = item.birth,
-        )
+        return UserResponse.fromUser(item)
     }
 }

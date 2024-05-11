@@ -37,7 +37,7 @@ class Message(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long = 0
 
     @Column
     var createdAt: Date = Date()

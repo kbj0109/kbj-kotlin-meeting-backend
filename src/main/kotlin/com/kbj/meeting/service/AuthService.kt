@@ -5,8 +5,6 @@ import com.kbj.meeting.constant.ExpiredTokenException
 import com.kbj.meeting.constant.InvalidTokenException
 import com.kbj.meeting.constant.NotFoundException
 import com.kbj.meeting.controller.AuthLoginRequest
-import com.kbj.meeting.controller.AuthLoginResponse
-import com.kbj.meeting.controller.AuthRenewResponse
 import com.kbj.meeting.repository.AuthRepository
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.Auth
@@ -36,7 +34,7 @@ class AuthService(
     @Value("\${RefreshTokenExpireDates}")
     private lateinit var refreshTokenExpireDates: String
 
-    fun login(data: AuthLoginRequest): AuthLoginResponse {
+    fun login(data: AuthLoginRequest): Pair<String, String> {
         val user = userRepository.findByUsername(data.username) ?: throw NotFoundException()
 
         val isCorrect = encryptUtil.comparePassword(data.password, user.password)
@@ -55,12 +53,7 @@ class AuthService(
                 ),
             )
 
-        val jwtData =
-            LoginUserData(
-                user.id,
-                user.username,
-                auth.id,
-            )
+        val jwtData = LoginUserData(user.id, user.username, auth.id)
 
         val accessTokenExpireLocalDateTime = LocalDateTime.now().plusMinutes(accessTokenExpireMinutes.toLong())
         val accessToken =
@@ -69,14 +62,14 @@ class AuthService(
                 convertUtil.getDateFromLocalDateTime(accessTokenExpireLocalDateTime),
             )
 
-        return AuthLoginResponse(accessToken, refreshToken)
+        return Pair(accessToken, refreshToken)
     }
 
     fun renewAccessToken(
         userId: Long,
         authId: Long,
         refreshToken: String,
-    ): AuthRenewResponse {
+    ): Pair<String, String?> {
         val auth = this.authRepository.findById(authId).orElseThrow { NotFoundException() }
 
         if ((auth.data as AuthData.RefreshToken).refreshToken != refreshToken) {
@@ -89,10 +82,7 @@ class AuthService(
 
         val user = userRepository.findById(userId).orElseThrow { NotFoundException() }
 
-        val isRenewRefresh =
-            LocalDateTime.now().plusDays(
-                refreshTokenExpireDates.toLong() / 3 * 2,
-            ) > auth.expiredAt
+        val isRenewRefresh = LocalDateTime.now().plusDays(refreshTokenExpireDates.toLong() / 3 * 2) > auth.expiredAt
 
         var newAuthId = auth.id
         var newRefreshToken = refreshToken
@@ -118,18 +108,14 @@ class AuthService(
         val accessTokenExpireLocalDateTime = LocalDateTime.now().plusMinutes(accessTokenExpireMinutes.toLong())
         val accessToken =
             jwtUtil.createUserJwtToken(
-                LoginUserData(
-                    user.id,
-                    user.username,
-                    newAuthId,
-                ),
+                LoginUserData(user.id, user.username, newAuthId),
                 convertUtil.getDateFromLocalDateTime(accessTokenExpireLocalDateTime),
             )
 
         if (isRenewRefresh) {
-            return AuthRenewResponse(accessToken, newRefreshToken)
+            return Pair(accessToken, newRefreshToken)
         }
 
-        return AuthRenewResponse(accessToken)
+        return Pair(accessToken, null)
     }
 }

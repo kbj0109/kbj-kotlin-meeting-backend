@@ -23,22 +23,21 @@ class AuthController(
     fun login(
         @Valid @RequestBody data: AuthLoginRequest,
     ): AuthLoginResponse {
-        val loginResult = authService.login(data)
+        val (accessToken, refreshToken) = authService.login(data)
 
-        return loginResult
+        return AuthLoginResponse(accessToken, refreshToken)
     }
 
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard(allowExpiredToken = true)
     @PostMapping("/renew")
     fun renewAccessToken(
         @RequestBody data: AuthRenewRequest,
         @LoginUser loginUser: LoginUserData,
     ): AuthRenewResponse {
-        val result = authService.renewAccessToken(loginUser.userId, loginUser.authId, data.refreshToken)
+        val (accessToken, refreshToken) =
+            authService.renewAccessToken(loginUser.userId, loginUser.authId, data.refreshToken)
 
-        return result
+        return AuthRenewResponse(accessToken, refreshToken)
     }
 }

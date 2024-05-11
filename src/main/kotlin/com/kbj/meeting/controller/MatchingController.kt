@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/matchinges")
 @Tag(name = "matchinges")
 class MatchingController(private val matchingService: MatchingService) {
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
     @GetMapping("/list")
     fun readManyMatchinges(
@@ -28,33 +26,10 @@ class MatchingController(private val matchingService: MatchingService) {
         @LoginUser() loginUser: LoginUserData,
     ): MatchingesResponse {
         val pageRequest = PageRequest.of(pagingOption.pageNumber, pagingOption.pageSize)
+
         val (totalCount, list) = matchingService.readManyAndTotalCountWithUsers(loginUser.userId, pageRequest)
 
-        val newList =
-            list.map { matching ->
-                MatchingResponse(
-                    id = matching.id!!,
-                    createdAt = matching.createdAt,
-                    userId = matching.userId,
-                    matchingUserId = matching.matchingUserId,
-                    messageId = matching.messageId,
-                    matchingUser =
-                        matching.matchingUser?.let { user ->
-                            UserResponse(
-                                id = user.id,
-                                createdAt = user.createdAt,
-                                updatedAt = user.updatedAt,
-                                deletedAt = user.deletedAt,
-                                username = user.username,
-                                name = user.name,
-                                gender = user.gender,
-                                email = user.email,
-                                phone = user.phone,
-                                birth = user.birth,
-                            )
-                        },
-                )
-            }
+        val newList = list.map { matching -> MatchingResponse.fromMatching(matching) }
 
         return MatchingesResponse(totalCount, newList)
     }

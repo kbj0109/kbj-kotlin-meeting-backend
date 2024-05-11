@@ -27,9 +27,7 @@ class MessageController(
     private val messageService: MessageService,
     private val convertUtil: ConvertUtil,
 ) {
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
     @PostMapping("/send")
     @Transactional
@@ -39,23 +37,10 @@ class MessageController(
     ): MessageResponse {
         val item = this.messageService.sendMessageAfterCheck(loginUser.userId, data)
 
-        return MessageResponse(
-            id = item.id!!,
-            createdAt = item.createdAt,
-            updatedAt = item.updatedAt,
-            deletedAt = item.deletedAt,
-            fromUserId = item.fromUserId,
-            toUserId = item.toUserId,
-            messageLevel = item.messageLevel,
-            messageStatus = item.messageStatus,
-            text = item.text,
-            reason = item.reason,
-        )
+        return MessageResponse.fromMessage(item)
     }
 
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
     @PostMapping("/{messageId}/confirm")
     @Transactional
@@ -72,23 +57,10 @@ class MessageController(
                 data.reason,
             )
 
-        return MessageResponse(
-            id = item.id!!,
-            createdAt = item.createdAt,
-            updatedAt = item.updatedAt,
-            deletedAt = item.deletedAt,
-            fromUserId = item.fromUserId,
-            toUserId = item.toUserId,
-            messageLevel = item.messageLevel,
-            messageStatus = item.messageStatus,
-            text = item.text,
-            reason = item.reason,
-        )
+        return MessageResponse.fromMessage(item)
     }
 
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
     @GetMapping("/sent")
     @Transactional
@@ -97,45 +69,16 @@ class MessageController(
         @LoginUser() loginUser: LoginUserData,
     ): MessagesResponse {
         val pageRequest = PageRequest.of(pagingOption.pageNumber, pagingOption.pageSize)
+
         val (totalCount, list) = messageService.readManyAndTotalCountSentWithUsers(loginUser.userId, pageRequest)
 
         val newList =
-            list.map { message ->
-                MessageUserResponse(
-                    id = message.id!!,
-                    createdAt = message.createdAt,
-                    updatedAt = message.updatedAt,
-                    deletedAt = message.deletedAt,
-                    fromUserId = message.fromUserId,
-                    toUserId = message.toUserId,
-                    messageLevel = message.messageLevel,
-                    messageStatus = message.messageStatus,
-                    text = message.text,
-                    reason = message.reason,
-                    user =
-                        message.toUser?.let { user ->
-                            UserResponse(
-                                id = user.id,
-                                createdAt = user.createdAt,
-                                updatedAt = user.updatedAt,
-                                deletedAt = user.deletedAt,
-                                username = user.username,
-                                name = user.name,
-                                gender = user.gender,
-                                email = user.email,
-                                phone = user.phone,
-                                birth = user.birth,
-                            )
-                        },
-                )
-            }
+            list.map { message -> MessageUserResponse.fromMessageWithUser(message, message.toUser) }
 
         return MessagesResponse(totalCount, newList)
     }
 
-    @SecurityRequirements(
-        SecurityRequirement(name = "Authorization"),
-    )
+    @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
     @GetMapping("/received")
     @Transactional
@@ -144,38 +87,11 @@ class MessageController(
         @LoginUser() loginUser: LoginUserData,
     ): MessagesResponse {
         val pageRequest = PageRequest.of(pagingOption.pageNumber, pagingOption.pageSize)
+
         val (totalCount, list) = messageService.readManyAndTotalCountReceivedWithUsers(loginUser.userId, pageRequest)
 
         val newList =
-            list.map { message ->
-                MessageUserResponse(
-                    id = message.id!!,
-                    createdAt = message.createdAt,
-                    updatedAt = message.updatedAt,
-                    deletedAt = message.deletedAt,
-                    fromUserId = message.fromUserId,
-                    toUserId = message.toUserId,
-                    messageLevel = message.messageLevel,
-                    messageStatus = message.messageStatus,
-                    text = message.text,
-                    reason = message.reason,
-                    user =
-                        message.fromUser?.let { user ->
-                            UserResponse(
-                                id = user.id,
-                                createdAt = user.createdAt,
-                                updatedAt = user.updatedAt,
-                                deletedAt = user.deletedAt,
-                                username = user.username,
-                                name = user.name,
-                                gender = user.gender,
-                                email = user.email,
-                                phone = user.phone,
-                                birth = user.birth,
-                            )
-                        },
-                )
-            }
+            list.map { message -> MessageUserResponse.fromMessageWithUser(message, message.fromUser) }
 
         return MessagesResponse(totalCount, newList)
     }
