@@ -1,7 +1,7 @@
 package com.kbj.meeting.service
 
 import com.kbj.meeting.constant.ConflictException
-import com.kbj.meeting.controller.CreateUserDTO
+import com.kbj.meeting.controller.CreateUserRequest
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.repository.entity.User
@@ -16,7 +16,7 @@ class UserService(
     private val encryptUtil: EncryptUtil,
     private val convertUtil: ConvertUtil,
 ) {
-    fun createUser(data: CreateUserDTO): User {
+    fun createUser(data: CreateUserRequest): User {
         val orgUser = userRepository.findByUsername(data.username)
 
         if (orgUser != null) {

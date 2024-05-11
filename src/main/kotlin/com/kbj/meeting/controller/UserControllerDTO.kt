@@ -5,11 +5,13 @@ package com.kbj.meeting.controller
 import com.kbj.meeting.annotation.paramValidator.NumericString
 import com.kbj.meeting.annotation.paramValidator.OneOfValues
 import com.kbj.meeting.constant.Regex.Companion.DATE_REGEX
+import com.kbj.meeting.repository.entity.GenderEnum
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
+import java.util.*
 
-data class CreateUserDTO(
+data class CreateUserRequest(
     @field:Size(min = 5, max = 20)
     var username: String,
     @field:Size(min = 5, max = 20)
@@ -23,5 +25,18 @@ data class CreateUserDTO(
     @field:NumericString()
     val phone: String?,
     @field:Pattern(regexp = DATE_REGEX)
+    val birth: String?,
+)
+
+data class UserResponse(
+    var id: Long,
+    var createdAt: Date,
+    var updatedAt: Date,
+    var deletedAt: Date?,
+    var username: String,
+    val name: String?,
+    val gender: GenderEnum?,
+    val email: String?,
+    val phone: String?,
     val birth: String?,
 )
