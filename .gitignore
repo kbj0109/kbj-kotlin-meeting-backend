@@ -38,3 +38,6 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+# Ignore Gradle Wrapper JAR file
+gradle/wrapper/gradle-wrapper.jar
