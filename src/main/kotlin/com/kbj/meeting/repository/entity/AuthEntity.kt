@@ -8,33 +8,33 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import jakarta.persistence.Temporal
-import jakarta.persistence.TemporalType
 import java.util.Date
 
 enum class AuthTypeEnum(val value: String) {
-    REFRESH_TOKEN("refresh"),
+    RefreshToken("RefreshToken"),
 }
 
 @Entity
 @Table(name = "auths", schema = "kbj_meeting_backend")
-class Auth {
+class Auth(
+    userId: Long,
+    authType: AuthTypeEnum,
+    expiredAt: Date,
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long = 0
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    var createdAt: Date? = null
+    var createdAt: Date? = Date()
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    var expiredAt: Date? = null
-
-    @Column(nullable = false)
-    var userId: Long? = null
+    var userId: Long = userId
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var type: AuthTypeEnum? = null
+    var authType: AuthTypeEnum = authType
+
+    @Column()
+    var expiredAt: Date = expiredAt
 }
