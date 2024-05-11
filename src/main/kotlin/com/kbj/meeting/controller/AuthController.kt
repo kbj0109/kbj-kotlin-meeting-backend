@@ -32,16 +32,8 @@ class AuthController(
         @RequestBody data: AuthRenewRequest,
         @LoginUser loginUser: LoginUserData,
     ): AuthRenewResponse {
-        println(1111)
-        println(loginUser)
+        val result = authService.renewAccessToken(loginUser.userId, loginUser.authId, data.refreshToken)
 
-        // println(loginUser)
-
-        val tempUserId: Long = 1
-        val tempAuthId: Long = 31
-
-        val renewResult = authService.renewAccessToken(tempUserId, tempAuthId, data.refreshToken)
-
-        return renewResult
+        return result
     }
 }

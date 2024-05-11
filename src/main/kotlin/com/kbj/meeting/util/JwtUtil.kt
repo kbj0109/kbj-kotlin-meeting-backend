@@ -64,7 +64,7 @@ class JwtUtil {
             return LoginUserData(
                 userId = e.claims["userId"]?.toString()?.toLongOrNull() ?: 0,
                 username = e.claims["username"]?.toString() ?: "",
-                authId = e.claims["userId"]?.toString()?.toLongOrNull() ?: 0,
+                authId = e.claims["authId"]?.toString()?.toLongOrNull() ?: 0,
             )
         } catch (e: Exception) {
             throw InvalidTokenException()
