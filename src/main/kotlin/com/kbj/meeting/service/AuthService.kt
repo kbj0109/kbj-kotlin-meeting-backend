@@ -1,12 +1,16 @@
 package com.kbj.meeting.service
 
 import com.kbj.meeting.constant.BadRequestException
+import com.kbj.meeting.constant.ExpiredTokenException
+import com.kbj.meeting.constant.InvalidTokenException
 import com.kbj.meeting.constant.NotFoundException
 import com.kbj.meeting.controller.AuthLoginRequest
 import com.kbj.meeting.controller.AuthLoginResponse
+import com.kbj.meeting.controller.AuthRenewResponse
 import com.kbj.meeting.repository.AuthRepository
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.Auth
+import com.kbj.meeting.repository.entity.AuthData
 import com.kbj.meeting.repository.entity.AuthTypeEnum
 import com.kbj.meeting.util.ConvertUtil
 import com.kbj.meeting.util.EncryptUtil
@@ -65,5 +69,66 @@ class AuthService(
             )
 
         return AuthLoginResponse(accessToken, refreshToken)
+    }
+
+    fun renewAccessToken(
+        userId: Long,
+        authId: Long,
+        refreshToken: String,
+    ): AuthRenewResponse {
+        val auth = this.authRepository.findById(authId).orElseThrow { NotFoundException() }
+
+        if ((auth.data as AuthData.RefreshToken).refreshToken !== refreshToken) {
+            throw InvalidTokenException()
+        }
+
+        if (auth.expiredAt < LocalDateTime.now()) {
+            throw ExpiredTokenException("Refresh Token Expired")
+        }
+
+        val user = userRepository.findById(userId).orElseThrow { NotFoundException() }
+
+        val isRenewRefresh =
+            LocalDateTime.now().plusDays(
+                refreshTokenExpireDates.toLong() / 3 * 2,
+            ) > auth.expiredAt
+
+        var newAuthId = auth.id
+        var newRefreshToken = refreshToken
+
+        if (isRenewRefresh) {
+            newRefreshToken = randomUtil.createRandomString(30)
+            val nweRefreshExpireAt = LocalDateTime.now().plusDays(refreshTokenExpireDates.toLong())
+
+            authRepository.deleteById(auth.id)
+            val newAuth =
+                authRepository.save(
+                    Auth(
+                        userId = user.id,
+                        authType = AuthTypeEnum.RefreshToken,
+                        expiredAt = nweRefreshExpireAt,
+                        data = mapOf("refreshToken" to newRefreshToken),
+                    ),
+                )
+
+            newAuthId = newAuth.id
+        }
+
+        val accessTokenExpireLocalDateTime = LocalDateTime.now().plusMinutes(accessTokenExpireMinutes.toLong())
+        val accessToken =
+            jwtUtil.createUserJwtToken(
+                mapOf(
+                    "userId" to user.id,
+                    "username" to user.username,
+                    "authId" to newAuthId,
+                ),
+                convertUtil.getDateFromLocalDateTime(accessTokenExpireLocalDateTime),
+            )
+
+        if (isRenewRefresh) {
+            return AuthRenewResponse(accessToken, refreshToken)
+        }
+
+        return AuthRenewResponse(accessToken)
     }
 }

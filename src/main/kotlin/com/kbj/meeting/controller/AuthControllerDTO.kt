@@ -15,3 +15,13 @@ data class AuthLoginResponse(
     var accessToken: String,
     var refreshToken: String,
 )
+
+data class AuthRenewRequest(
+    @field:Size(min = 30)
+    var refreshToken: String,
+)
+
+data class AuthRenewResponse(
+    var accessToken: String,
+    var refreshToken: String? = null,
+)

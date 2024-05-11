@@ -24,4 +24,16 @@ class AuthController(
 
         return loginResult
     }
+
+    @PostMapping("/renew")
+    fun renewAccessToken(
+        @Valid @RequestBody data: AuthRenewRequest,
+    ): AuthRenewResponse {
+        val tempUserId: Long = 1
+        val tempAuthId: Long = 1
+
+        val renewResult = authService.renewAccessToken(tempUserId, tempAuthId, data.refreshToken)
+
+        return renewResult
+    }
 }
