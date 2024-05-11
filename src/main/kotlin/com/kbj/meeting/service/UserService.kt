@@ -1,7 +1,9 @@
 package com.kbj.meeting.service
 
 import com.kbj.meeting.constant.ConflictException
+import com.kbj.meeting.constant.NotFoundException
 import com.kbj.meeting.controller.CreateUserRequest
+import com.kbj.meeting.controller.UpdateeUserRequest
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.repository.entity.User
@@ -37,15 +39,24 @@ class UserService(
         return userRepository.save(user)
     }
 
-    fun getAllUsers(): List<User> {
-        return userRepository.findAll()
-    }
-
     fun getUserById(id: Long): User {
         return userRepository.findById(id).orElseThrow { NoSuchElementException("User not found") }
     }
 
-    fun deleteUser(id: Long) {
-        userRepository.deleteById(id)
+    fun updateUser(
+        userId: Long,
+        data: UpdateeUserRequest,
+    ): User {
+        val item = userRepository.findById(userId).orElseThrow { NotFoundException() }
+
+        item.password = encryptUtil.encryptPassword(data.password)
+        item.name = data.name
+        item.gender = convertUtil.getEnumValueOrNull<GenderEnum>(data.gender)
+        item.email = data.email
+        item.birth = data.birth
+
+        val newItem = userRepository.save(item)
+
+        return newItem
     }
 }

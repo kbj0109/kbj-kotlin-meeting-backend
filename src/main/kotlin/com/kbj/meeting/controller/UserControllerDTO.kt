@@ -28,6 +28,21 @@ data class CreateUserRequest(
     val birth: String?,
 )
 
+data class UpdateeUserRequest(
+    @field:Size(min = 5, max = 20)
+    var password: String,
+    @field:Size(min = 2)
+    val name: String,
+    @field:OneOfValues(values = ["Male", "Female"])
+    val gender: String?,
+    @field:Email()
+    val email: String?,
+    @field:NumericString()
+    val phone: String?,
+    @field:Pattern(regexp = DATE_REGEX)
+    val birth: String?,
+)
+
 data class UserResponse(
     var id: Long,
     var createdAt: Date,
