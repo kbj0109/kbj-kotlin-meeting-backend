@@ -8,35 +8,43 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.util.Date
 
-enum class GenderEnum {
-    Male,
-    Female,
+enum class GenderEnum(val value: String) {
+    Male("male"),
+    Female("female"),
 }
 
 @Entity
 @Table(name = "users", schema = "kbj_meeting_backend")
-class User {
+class User(
+    username: String,
+    password: String,
+    name: String?,
+    gender: GenderEnum?,
+    email: String?,
+    phone: String?,
+    birth: String?,
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long = 0
 
     @Column
-    var createdAt: Date? = null
+    var createdAt: Date = Date()
 
     @Column
-    var updatedAt: Date? = null
+    var updatedAt: Date = Date()
 
     @Column
     var deletedAt: Date? = null
 
     @Column(nullable = false)
-    var username: String? = null
+    var username: String = username
 
     @Column(nullable = false)
-    var password: String? = null
+    var password: String = password
 
     @Column(nullable = false)
-    var name: String? = null
+    var name: String? = name
 
     @Column
     var gender: GenderEnum? = null

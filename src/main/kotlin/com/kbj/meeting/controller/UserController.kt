@@ -21,4 +21,12 @@ class UserController {
 
         return "Hello from users! 111"
     }
+
+    @PostMapping
+    fun createUser(
+        @RequestBody user: CreateUserDTO,
+    ): ResponseEntity<User> {
+        val newUser = userService.createUser(user)
+        return ResponseEntity(newUser, HttpStatus.CREATED)
+    }
 }
