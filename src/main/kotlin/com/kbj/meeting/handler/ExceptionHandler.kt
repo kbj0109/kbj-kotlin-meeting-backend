@@ -80,6 +80,7 @@ class ExceptionHandler {
         val stackTrace = ex.stackTrace.joinToString("\n") { it.toString() }
 
         println(stackTrace)
+        println(ex)
 
         // 개발 환경 한정 설정 필요
         exceptionResponse.stack = stackTrace

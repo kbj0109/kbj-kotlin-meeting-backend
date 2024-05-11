@@ -2,6 +2,7 @@
 
 package com.kbj.meeting.controller
 
+import com.kbj.meeting.annotation.paramValidator.OneOfValues
 import com.kbj.meeting.repository.entity.MessageLevelEnum
 import com.kbj.meeting.repository.entity.MessageStatusEnum
 import jakarta.validation.constraints.Size
@@ -12,6 +13,12 @@ data class MessageSendRequest(
     var messageLevel: MessageLevelEnum,
     @field:Size(min = 5)
     val text: String,
+)
+
+data class MessageConfirmRequest(
+    @field:OneOfValues(values = ["Accepted", "Rejected" ])
+    var messageStatus: String,
+    var reason: String?,
 )
 
 data class MessageResponse(

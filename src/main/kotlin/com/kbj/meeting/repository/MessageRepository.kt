@@ -30,4 +30,14 @@ interface MessageRepository : JpaRepository<Message, Long> {
         @Param("fromUserId") fromUserId: Long,
         @Param("messageStatus") messageStatus: MessageStatusEnum,
     ): Int
+
+    @Modifying
+    @Query(
+        "UPDATE Message SET messageStatus = :messageStatus, reason = :reason WHERE id = :messageId",
+    )
+    fun updateMessageStatus(
+        @Param("messageId") messageId: Long,
+        @Param("messageStatus") messageStatus: MessageStatusEnum,
+        @Param("reason") reason: String?,
+    ): Int
 }

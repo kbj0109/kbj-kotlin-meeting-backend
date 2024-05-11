@@ -6,6 +6,7 @@ import com.kbj.meeting.controller.MessageSendRequest
 import com.kbj.meeting.repository.MatchingRepository
 import com.kbj.meeting.repository.MessageRepository
 import com.kbj.meeting.repository.UserRepository
+import com.kbj.meeting.repository.entity.Matching
 import com.kbj.meeting.repository.entity.Message
 import com.kbj.meeting.repository.entity.MessageLevelEnum
 import com.kbj.meeting.repository.entity.MessageStatusEnum
@@ -81,5 +82,26 @@ class MessageService(
         }
 
         return false
+    }
+
+    fun updateMessageStatus(
+        messageId: Long,
+        toUserId: Long,
+        messageStatus: MessageStatusEnum,
+        reason: String?,
+    ): Message {
+        val item = this.messageRepository.findById(messageId).orElseThrow { NotFoundException() }
+        if (item.toUserId != toUserId || item.messageStatus != MessageStatusEnum.Activated) {
+            throw BadRequestException()
+        }
+
+        this.messageRepository.updateMessageStatus(messageId, messageStatus, reason)
+
+        if (messageStatus == MessageStatusEnum.Accepted) {
+            this.matchingRepository.save(Matching(toUserId, item.fromUserId, item.id!!))
+            this.matchingRepository.save(Matching(item.fromUserId, toUserId, item.id!!))
+        }
+
+        return this.messageRepository.findById(messageId).orElseThrow { NotFoundException() }
     }
 }
