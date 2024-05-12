@@ -60,4 +60,8 @@ interface MessageRepository : JpaRepository<Message, Long> {
         @Param("userId") userId: Long,
         pageRequest: PageRequest,
     ): Page<Message>
+
+    fun findByFromUserId(fromUserId: Long): List<Message>
+
+    fun findByToUserId(toUserId: Long): List<Message>
 }
