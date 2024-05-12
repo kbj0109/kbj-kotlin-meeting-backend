@@ -51,7 +51,7 @@ class UserController(private val userService: UserService) {
     @PutMapping("/{userId}")
     fun updateUser(
         @PathVariable userId: Long,
-        @Valid @RequestBody data: UpdateUserRequest,
+        @Valid @RequestBody data: UserUpdateRequest,
         @LoginUser() loginUser: LoginUserData,
     ): UserResponse {
         if (userId != loginUser.userId) throw BadRequestException()

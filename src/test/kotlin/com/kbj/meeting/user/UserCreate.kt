@@ -5,7 +5,6 @@ import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.util.JsonUtil
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -26,13 +25,12 @@ class UserCreate() {
     @Autowired private lateinit var userRepository: UserRepository
 
     @Test
-    @Order(1)
     @DisplayName("POST /users")
     fun createUserTest() {
         val data =
             UserCreateRequest(
-                username = "sample",
-                password = "sample",
+                username = "create_sample",
+                password = "create_sample",
                 name = "sample",
                 gender = GenderEnum.Male.toString(),
                 email = "sample@sample.com",

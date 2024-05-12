@@ -4,7 +4,6 @@ import com.kbj.meeting.TestUtil
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.util.JsonUtil
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -26,20 +25,21 @@ class UserRead() {
     @Autowired private lateinit var userRepository: UserRepository
 
     @Test
-    @Order(2)
     @DisplayName("GET /users/{id}")
     fun readUserTest() {
+        val user = testUtil.createTestUser(mockMvc, "read_sample", "read_sample")
+
         // Step 1: Failed without Login
-        mockMvc.get("/users/${1}")
+        mockMvc.get("/users/${user.id}")
             .andExpect {
                 status { isUnauthorized() }
             }
 
         // Step 2: Success with Login
-        val (accessToken) = testUtil.login(mockMvc, "sample", "sample")
+        val (accessToken) = testUtil.login(mockMvc, "read_sample", "read_sample")
 
         val response =
-            mockMvc.get("/users/${1}") {
+            mockMvc.get("/users/${user.id}") {
                 header("Authorization", "Bearer $accessToken")
             }.andExpect {
                 status { isOk() }
