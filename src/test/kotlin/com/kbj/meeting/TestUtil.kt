@@ -1,10 +1,15 @@
 package com.kbj.meeting
 
+import com.kbj.meeting.constant.NotFoundException
 import com.kbj.meeting.controller.AuthLoginRequest
 import com.kbj.meeting.controller.AuthLoginResponse
+import com.kbj.meeting.controller.MessageResponse
+import com.kbj.meeting.controller.MessageSendRequest
 import com.kbj.meeting.controller.UserCreateRequest
 import com.kbj.meeting.controller.UserResponse
+import com.kbj.meeting.repository.MessageRepository
 import com.kbj.meeting.repository.entity.GenderEnum
+import com.kbj.meeting.repository.entity.MessageLevelEnum
 import com.kbj.meeting.util.ConvertUtil
 import com.kbj.meeting.util.JsonUtil
 import org.springframework.http.MediaType
@@ -16,7 +21,11 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 
 @Component()
-class TestUtil(private val jsonUtil: JsonUtil, private val convertUtil: ConvertUtil) {
+class TestUtil(
+    private val jsonUtil: JsonUtil,
+    private val convertUtil: ConvertUtil,
+    private val messageRepository: MessageRepository,
+) {
     fun parseDate(dateStr: String?): Date? {
         if (dateStr == null) return null
 
@@ -69,7 +78,7 @@ class TestUtil(private val jsonUtil: JsonUtil, private val convertUtil: ConvertU
         return userResponse
     }
 
-    fun login(
+    fun loginTest(
         mockMvc: MockMvc,
         username: String,
         password: String,
@@ -78,6 +87,8 @@ class TestUtil(private val jsonUtil: JsonUtil, private val convertUtil: ConvertU
             mockMvc.post("/auths/login") {
                 contentType = MediaType.APPLICATION_JSON
                 content = jsonUtil.stringify(AuthLoginRequest(username, password))
+            }.andExpect {
+                status { isOk() }
             }.andReturn().response
 
         val resBody = jsonUtil.parse<Map<String, Any>>(loginRes.contentAsString)
@@ -89,5 +100,31 @@ class TestUtil(private val jsonUtil: JsonUtil, private val convertUtil: ConvertU
         assert(!refreshToken.isNullOrBlank()) { "Refresh Token is missing or empty." }
 
         return AuthLoginResponse(accessToken!!, refreshToken!!)
+    }
+
+    fun sendMessageTest(
+        mockMvc: MockMvc,
+        username: String,
+        password: String,
+        toUserId: Long,
+    ): MessageResponse {
+        val (accessToken) = loginTest(mockMvc, username, password)
+
+        val data = MessageSendRequest(toUserId = toUserId, messageLevel = MessageLevelEnum.Normal, text = "Hello World")
+
+        val res =
+            mockMvc.post("/messages/send") {
+                contentType = MediaType.APPLICATION_JSON
+                content = jsonUtil.stringify(data)
+                header("Authorization", "Bearer $accessToken")
+            }.andExpect {
+                status { isOk() }
+            }.andReturn().response
+
+        val messageData = jsonUtil.parse<Map<String, Any>>(res.contentAsString)
+        val messageId = (messageData["id"] as Int).toLong()
+        val message = messageRepository.findById(messageId).orElseThrow { NotFoundException() }
+
+        return MessageResponse.fromMessage(message)
     }
 }

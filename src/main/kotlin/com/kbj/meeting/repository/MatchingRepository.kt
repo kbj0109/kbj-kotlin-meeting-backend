@@ -25,4 +25,9 @@ interface MatchingRepository : JpaRepository<Matching, Long> {
     ): Page<Matching>
 
     fun countByUserId(userId: Long): Int
+
+    fun findByUserIdAndMatchingUserId(
+        userId: Long,
+        matchingUserId: Long,
+    ): Matching?
 }
