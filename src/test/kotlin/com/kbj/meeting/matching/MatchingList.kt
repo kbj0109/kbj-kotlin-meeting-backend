@@ -2,9 +2,11 @@ package com.kbj.meeting.matching
 
 import com.kbj.meeting.TestUtil
 import com.kbj.meeting.controller.MessageConfirmRequest
+import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.MatchingRepository
 import com.kbj.meeting.repository.entity.MessageStatusEnum
 import com.kbj.meeting.util.JsonUtil
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,25 +29,31 @@ class MatchingList() {
 
     @Autowired private lateinit var jsonUtil: JsonUtil
 
-    @Test
-    @DisplayName("GET /matchinges")
-    fun sendMessageTest() {
-        val user1 = testUtil.createTestUser(mockMvc, "matching_list_user1", "matching_list_user1")
-        val user2 = testUtil.createTestUser(mockMvc, "matching_list_user2", "matching_list_user2")
-        val user3 = testUtil.createTestUser(mockMvc, "matching_list_user3", "matching_list_user3")
+    private lateinit var user1: UserResponse
+    private lateinit var user2: UserResponse
+    private lateinit var user3: UserResponse
+    private lateinit var user1AccessToken: String
+    private lateinit var user2AccessToken: String
+    private lateinit var user3AccessToken: String
+
+    @BeforeEach
+    fun setup() {
+        user1 = testUtil.createTestUser(mockMvc, "matching_list_user1", "matching_list_user1")
+        user2 = testUtil.createTestUser(mockMvc, "matching_list_user2", "matching_list_user2")
+        user3 = testUtil.createTestUser(mockMvc, "matching_list_user3", "matching_list_user3")
+
+        user1AccessToken = testUtil.loginTest(mockMvc, "matching_list_user1", "matching_list_user1").accessToken
+        user2AccessToken = testUtil.loginTest(mockMvc, "matching_list_user2", "matching_list_user2").accessToken
+        user3AccessToken = testUtil.loginTest(mockMvc, "matching_list_user3", "matching_list_user3").accessToken
 
         val message1 = testUtil.sendMessageTest(mockMvc, "matching_list_user1", "matching_list_user1", user2.id)
         val message2 = testUtil.sendMessageTest(mockMvc, "matching_list_user1", "matching_list_user1", user3.id)
-
-        val loginRes1 = testUtil.loginTest(mockMvc, "matching_list_user1", "matching_list_user1")
-        val loginRes2 = testUtil.loginTest(mockMvc, "matching_list_user2", "matching_list_user2")
-        val loginRes3 = testUtil.loginTest(mockMvc, "matching_list_user3", "matching_list_user3")
 
         val data = MessageConfirmRequest(MessageStatusEnum.Accepted.value, "Good to Accept")
         mockMvc.post("/messages/${message1.id}/confirm") {
             contentType = MediaType.APPLICATION_JSON
             content = jsonUtil.stringify(data)
-            header("Authorization", "Bearer ${loginRes2.accessToken}")
+            header("Authorization", "Bearer $user2AccessToken")
         }.andExpect {
             status { isOk() }
         }
@@ -53,11 +61,15 @@ class MatchingList() {
         mockMvc.post("/messages/${message2.id}/confirm") {
             contentType = MediaType.APPLICATION_JSON
             content = jsonUtil.stringify(data)
-            header("Authorization", "Bearer ${loginRes3.accessToken}")
+            header("Authorization", "Bearer $user3AccessToken")
         }.andExpect {
             status { isOk() }
         }
+    }
 
+    @Test
+    @DisplayName("GET /matchinges")
+    fun sendMessageTest() {
         // 1. Fail without login
         mockMvc.get("/matchinges?pageNumber=0&pageSize=1")
             .andExpect {
@@ -67,7 +79,7 @@ class MatchingList() {
         // 2. Success with Login
         val sentListRes =
             mockMvc.get("/matchinges?pageNumber=0&pageSize=1") {
-                header("Authorization", "Bearer ${loginRes1.accessToken}")
+                header("Authorization", "Bearer $user1AccessToken")
             }
                 .andExpect {
                     status { isOk() }

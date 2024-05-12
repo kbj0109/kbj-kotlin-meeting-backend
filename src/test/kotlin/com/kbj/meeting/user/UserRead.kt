@@ -1,7 +1,6 @@
 package com.kbj.meeting.user
 
 import com.kbj.meeting.TestUtil
-import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.util.JsonUtil
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -20,8 +19,6 @@ class UserRead() {
     @Autowired private lateinit var mockMvc: MockMvc
 
     @Autowired private lateinit var jsonUtil: JsonUtil
-
-    @Autowired private lateinit var userRepository: UserRepository
 
     @Test
     @DisplayName("GET /users/{id}")

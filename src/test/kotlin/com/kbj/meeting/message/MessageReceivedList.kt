@@ -1,8 +1,11 @@
 package com.kbj.meeting.message
 
 import com.kbj.meeting.TestUtil
+import com.kbj.meeting.controller.AuthLoginResponse
+import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.MessageRepository
 import com.kbj.meeting.util.JsonUtil
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,18 +26,26 @@ class MessageReceivedList() {
 
     @Autowired private lateinit var jsonUtil: JsonUtil
 
-    @Test
-    @DisplayName("post /messages/received")
-    fun sendMessageTest() {
-        val user1 = testUtil.createTestUser(mockMvc, "message2_list_user1", "message2_list_user1")
-        val user2 = testUtil.createTestUser(mockMvc, "message2_list_user2", "message2_list_user2")
-        val user3 = testUtil.createTestUser(mockMvc, "message2_list_user3", "message2_list_user3")
+    private lateinit var user1: UserResponse
+    private lateinit var user2: UserResponse
+    private lateinit var user3: UserResponse
+    private lateinit var loginRes1: AuthLoginResponse
 
-        val loginRes1 = testUtil.loginTest(mockMvc, "message2_list_user1", "message2_list_user1")
+    @BeforeEach
+    fun setUp() {
+        user1 = testUtil.createTestUser(mockMvc, "message2_list_user1", "message2_list_user1")
+        user2 = testUtil.createTestUser(mockMvc, "message2_list_user2", "message2_list_user2")
+        user3 = testUtil.createTestUser(mockMvc, "message2_list_user3", "message2_list_user3")
+
+        loginRes1 = testUtil.loginTest(mockMvc, "message2_list_user1", "message2_list_user1")
 
         testUtil.sendMessageTest(mockMvc, "message2_list_user2", "message2_list_user2", user1.id)
         testUtil.sendMessageTest(mockMvc, "message2_list_user3", "message2_list_user3", user1.id)
+    }
 
+    @Test
+    @DisplayName("post /messages/received")
+    fun sendMessageTest() {
         // 1. Fail without login
         mockMvc.get("/messages/received?pageNumber=0&pageSize=1")
             .andExpect {

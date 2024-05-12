@@ -1,11 +1,15 @@
 package com.kbj.meeting.message
 
 import com.kbj.meeting.TestUtil
+import com.kbj.meeting.controller.AuthLoginResponse
 import com.kbj.meeting.controller.MessageConfirmRequest
+import com.kbj.meeting.controller.MessageResponse
+import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.MatchingRepository
 import com.kbj.meeting.repository.entity.MessageStatusEnum
 import com.kbj.meeting.util.JsonUtil
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,14 +32,22 @@ class MessageConfirm() {
 
     @Autowired private lateinit var jsonUtil: JsonUtil
 
+    private lateinit var user1: UserResponse
+    private lateinit var user2: UserResponse
+    private lateinit var loginRes1: AuthLoginResponse
+    private lateinit var message: MessageResponse
+
+    @BeforeEach
+    fun setup() {
+        user1 = testUtil.createTestUser(mockMvc, "message_confirm_user1", "message_confirm_user1")
+        user2 = testUtil.createTestUser(mockMvc, "message_confirm_user2", "message_confirm_user2")
+        loginRes1 = testUtil.loginTest(mockMvc, "message_confirm_user1", "message_confirm_user1")
+        message = testUtil.sendMessageTest(mockMvc, "message_confirm_user2", "message_confirm_user2", user1.id)
+    }
+
     @Test
     @DisplayName("post /messages/confirm")
     fun sendMessageTest() {
-        val user1 = testUtil.createTestUser(mockMvc, "message_confirm_user1", "message_confirm_user1")
-        val user2 = testUtil.createTestUser(mockMvc, "message_confirm_user2", "message_confirm_user2")
-        val loginRes1 = testUtil.loginTest(mockMvc, "message_confirm_user1", "message_confirm_user1")
-        val message = testUtil.sendMessageTest(mockMvc, "message_confirm_user2", "message_confirm_user2", user1.id)
-
         val data = MessageConfirmRequest(MessageStatusEnum.Accepted.value, "Good to Accept")
 
         // 1. Fail without login
