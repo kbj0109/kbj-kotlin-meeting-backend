@@ -2,13 +2,13 @@ package com.kbj.meeting.controller
 
 import com.kbj.meeting.annotation.LoginUser
 import com.kbj.meeting.annotation.UserAuthGuard
+import com.kbj.meeting.constant.BadRequestException
 import com.kbj.meeting.service.UserService
 import com.kbj.meeting.type.LoginUserData
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import org.apache.coyote.BadRequestException
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

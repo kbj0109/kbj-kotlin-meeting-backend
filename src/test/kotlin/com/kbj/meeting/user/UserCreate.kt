@@ -1,10 +1,11 @@
-package com.kbj.meeting
+package com.kbj.meeting.user
 
 import com.kbj.meeting.controller.UserCreateRequest
 import com.kbj.meeting.repository.UserRepository
 import com.kbj.meeting.repository.entity.GenderEnum
 import com.kbj.meeting.util.JsonUtil
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -17,7 +18,7 @@ import org.springframework.test.web.servlet.post
 @SpringBootTest
 @DisplayName("API /users Test")
 @AutoConfigureMockMvc
-class UserTest() {
+class UserCreate() {
     @Autowired private lateinit var mockMvc: MockMvc
 
     @Autowired private lateinit var jsonUtil: JsonUtil
@@ -25,6 +26,7 @@ class UserTest() {
     @Autowired private lateinit var userRepository: UserRepository
 
     @Test
+    @Order(1)
     @DisplayName("POST /users")
     fun createUserTest() {
         val data =
