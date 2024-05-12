@@ -35,7 +35,7 @@ class UserRead() {
             }
 
         // Step 2: Success with Login
-        val (accessToken) = testUtil.login(mockMvc, "read_sample", "read_sample")
+        val (accessToken) = testUtil.loginTest(mockMvc, "read_sample", "read_sample")
 
         val response =
             mockMvc.get("/users/${user.id}") {

@@ -5,9 +5,9 @@ package com.kbj.meeting.controller
 import jakarta.validation.constraints.Size
 
 data class AuthLoginRequest(
-    @field:Size(min = 5, max = 20)
+    @field:Size(min = 5, max = 30)
     var username: String,
-    @field:Size(min = 5, max = 20)
+    @field:Size(min = 5, max = 30)
     var password: String,
 )
 

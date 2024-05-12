@@ -13,9 +13,9 @@ import jakarta.validation.constraints.Size
 import java.util.Date
 
 data class UserCreateRequest(
-    @field:Size(min = 5, max = 20)
+    @field:Size(min = 5, max = 30)
     var username: String,
-    @field:Size(min = 5, max = 20)
+    @field:Size(min = 5, max = 30)
     var password: String,
     @field:Size(min = 2)
     val name: String,

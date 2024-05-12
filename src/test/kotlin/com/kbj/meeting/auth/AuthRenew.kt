@@ -30,7 +30,7 @@ class AuthRenew() {
     @DisplayName("post /auths/renew")
     fun loginTest() {
         val user = testUtil.createTestUser(mockMvc, "renew_sample", "renew_sample")
-        val (accessToken, refreshToken) = testUtil.login(mockMvc, "renew_sample", "renew_sample")
+        val (accessToken, refreshToken) = testUtil.loginTest(mockMvc, "renew_sample", "renew_sample")
 
         // Access Token 없는 경우
         mockMvc.post("/auths/renew") {

@@ -57,7 +57,7 @@ class UserUpdate() {
         }
 
         // Step 2: Success with Login
-        val (accessToken) = testUtil.login(mockMvc, "update_sample", "update_sample")
+        val (accessToken) = testUtil.loginTest(mockMvc, "update_sample", "update_sample")
 
         val response =
             mockMvc.put("/users/${user.id}") {
