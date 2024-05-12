@@ -32,7 +32,7 @@ class UserUpdate() {
     @Autowired private lateinit var userRepository: UserRepository
 
     @Test
-    @DisplayName("GET /users/{id}")
+    @DisplayName("PUT /users/{id}")
     fun readUserTest() {
         val user = testUtil.createTestUser(mockMvc, "update_sample", "update_sample")
 

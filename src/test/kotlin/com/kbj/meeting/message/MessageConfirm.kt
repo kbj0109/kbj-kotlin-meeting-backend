@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
 @SpringBootTest
-@DisplayName("API /auths Test")
+@DisplayName("API /messages Test")
 @AutoConfigureMockMvc
 class MessageConfirm() {
     @Autowired
@@ -29,7 +29,7 @@ class MessageConfirm() {
     @Autowired private lateinit var jsonUtil: JsonUtil
 
     @Test
-    @DisplayName("post /messages/send")
+    @DisplayName("post /messages/confirm")
     fun sendMessageTest() {
         val user1 = testUtil.createTestUser(mockMvc, "message_confirm_user1", "message_confirm_user1")
         val user2 = testUtil.createTestUser(mockMvc, "message_confirm_user2", "message_confirm_user2")

@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
 @SpringBootTest
-@DisplayName("API /auths Test")
+@DisplayName("API /messages Test")
 @AutoConfigureMockMvc
 class MessageReceivedList() {
     @Autowired private lateinit var messageRepository: MessageRepository
@@ -24,7 +24,7 @@ class MessageReceivedList() {
     @Autowired private lateinit var jsonUtil: JsonUtil
 
     @Test
-    @DisplayName("post /messages/send")
+    @DisplayName("post /messages/received")
     fun sendMessageTest() {
         val user1 = testUtil.createTestUser(mockMvc, "message2_list_user1", "message2_list_user1")
         val user2 = testUtil.createTestUser(mockMvc, "message2_list_user2", "message2_list_user2")

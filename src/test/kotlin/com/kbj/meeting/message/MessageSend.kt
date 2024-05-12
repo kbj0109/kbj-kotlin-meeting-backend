@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 @SpringBootTest
-@DisplayName("API /auths Test")
+@DisplayName("API /messages Test")
 @AutoConfigureMockMvc
 class MessageSend() {
     @Autowired private lateinit var testUtil: TestUtil

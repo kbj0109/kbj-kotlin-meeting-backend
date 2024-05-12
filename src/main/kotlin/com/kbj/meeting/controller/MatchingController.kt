@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 class MatchingController(private val matchingService: MatchingService) {
     @SecurityRequirements(SecurityRequirement(name = "Authorization"))
     @UserAuthGuard()
-    @GetMapping("/list")
+    @GetMapping()
     fun readManyMatchinges(
         @Valid pagingOption: PagingOptionDTO,
         @LoginUser() loginUser: LoginUserData,
