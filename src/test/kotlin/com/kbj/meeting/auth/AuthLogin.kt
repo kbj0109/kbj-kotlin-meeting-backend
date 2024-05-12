@@ -18,11 +18,9 @@ import org.springframework.test.web.servlet.post
 @DisplayName("API /auths Test")
 @AutoConfigureMockMvc
 class AuthLogin() {
-    @Autowired
-    private lateinit var jwtUtil: JwtUtil
+    @Autowired private lateinit var jwtUtil: JwtUtil
 
-    @Autowired
-    private lateinit var testUtil: TestUtil
+    @Autowired private lateinit var testUtil: TestUtil
 
     @Autowired private lateinit var mockMvc: MockMvc
 

@@ -21,11 +21,9 @@ import org.springframework.test.web.servlet.put
 @DisplayName("API /users Test")
 @AutoConfigureMockMvc
 class UserUpdate() {
-    @Autowired
-    private lateinit var encryptUtil: EncryptUtil
+    @Autowired private lateinit var encryptUtil: EncryptUtil
 
-    @Autowired
-    private lateinit var testUtil: TestUtil
+    @Autowired private lateinit var testUtil: TestUtil
 
     @Autowired private lateinit var mockMvc: MockMvc
 

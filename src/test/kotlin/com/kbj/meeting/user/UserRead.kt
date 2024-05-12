@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.get
 @DisplayName("API /users Test")
 @AutoConfigureMockMvc
 class UserRead() {
-    @Autowired
-    private lateinit var testUtil: TestUtil
+    @Autowired private lateinit var testUtil: TestUtil
 
     @Autowired private lateinit var mockMvc: MockMvc
 
