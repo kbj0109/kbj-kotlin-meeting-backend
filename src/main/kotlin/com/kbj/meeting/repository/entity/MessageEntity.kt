@@ -48,10 +48,10 @@ class Message(
     @Column
     var deletedAt: Date? = null
 
-    @Column(name = "from_user_id", insertable = false, updatable = false)
+    @Column(name = "from_user_id")
     var fromUserId: Long = fromUserId
 
-    @Column(name = "to_user_id", insertable = false, updatable = false)
+    @Column(name = "to_user_id")
     var toUserId: Long = toUserId
 
     @Column(columnDefinition = "INT")
@@ -68,10 +68,10 @@ class Message(
     var reason: String? = reason
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_user_id")
+    @JoinColumn(name = "from_user_id", insertable = false, updatable = false)
     var fromUser: User? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_user_id")
+    @JoinColumn(name = "to_user_id", insertable = false, updatable = false)
     var toUser: User? = null
 }

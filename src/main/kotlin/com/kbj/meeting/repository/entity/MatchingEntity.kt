@@ -27,24 +27,24 @@ class Matching(
     @Column
     var createdAt: Date = Date()
 
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id")
     var userId: Long = userId
 
-    @Column(name = "matching_user_id", insertable = false, updatable = false)
+    @Column(name = "matching_user_id")
     var matchingUserId: Long = matchingUserId
 
-    @Column(name = "message_id", insertable = false, updatable = false)
+    @Column(name = "message_id")
     var messageId: Long = messageId
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     var user: User? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matching_user_id")
+    @JoinColumn(name = "matching_user_id", insertable = false, updatable = false)
     var matchingUser: User? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "message_id")
+    @JoinColumn(name = "message_id", insertable = false, updatable = false)
     var message: Message? = null
 }
