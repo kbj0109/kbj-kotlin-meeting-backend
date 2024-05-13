@@ -5,6 +5,9 @@ import com.kbj.meeting.controller.AuthLoginResponse
 import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.MessageRepository
 import com.kbj.meeting.util.JsonUtil
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -32,16 +35,26 @@ class MessageReceivedList() {
     private lateinit var loginRes1: AuthLoginResponse
 
     @BeforeEach
-    fun setUp() {
-        user1 = testUtil.createTestUser(mockMvc, "message2_list_user1", "message2_list_user1")
-        user2 = testUtil.createTestUser(mockMvc, "message2_list_user2", "message2_list_user2")
-        user3 = testUtil.createTestUser(mockMvc, "message2_list_user3", "message2_list_user3")
+    fun setUp(): Unit =
+        runBlocking {
+            val userList =
+                awaitAll(
+                    async { testUtil.createTestUser(mockMvc, "message2_list_user1", "message2_list_user1") },
+                    async { testUtil.createTestUser(mockMvc, "message2_list_user2", "message2_list_user2") },
+                    async { testUtil.createTestUser(mockMvc, "message2_list_user3", "message2_list_user3") },
+                )
 
-        loginRes1 = testUtil.loginTest(mockMvc, "message2_list_user1", "message2_list_user1")
+            user1 = userList[0]
+            user2 = userList[1]
+            user3 = userList[2]
 
-        testUtil.sendMessageTest(mockMvc, "message2_list_user2", "message2_list_user2", user1.id)
-        testUtil.sendMessageTest(mockMvc, "message2_list_user3", "message2_list_user3", user1.id)
-    }
+            awaitAll(
+                async { testUtil.sendMessageTest(mockMvc, "message2_list_user2", "message2_list_user2", user1.id) },
+                async { testUtil.sendMessageTest(mockMvc, "message2_list_user3", "message2_list_user3", user1.id) },
+            )
+
+            loginRes1 = testUtil.loginTest(mockMvc, "message2_list_user1", "message2_list_user1")
+        }
 
     @Test
     @DisplayName("post /messages/received")

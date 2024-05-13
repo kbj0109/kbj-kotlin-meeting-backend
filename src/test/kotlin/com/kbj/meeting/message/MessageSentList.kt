@@ -5,6 +5,9 @@ import com.kbj.meeting.controller.AuthLoginResponse
 import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.MessageRepository
 import com.kbj.meeting.util.JsonUtil
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -32,16 +35,26 @@ class MessageSentList() {
     private lateinit var loginRes3: AuthLoginResponse
 
     @BeforeEach
-    fun setup() {
-        user1 = testUtil.createTestUser(mockMvc, "message_list_user1", "message_list_user1")
-        user2 = testUtil.createTestUser(mockMvc, "message_list_user2", "message_list_user2")
-        user3 = testUtil.createTestUser(mockMvc, "message_list_user3", "message_list_user3")
+    fun setup(): Unit =
+        runBlocking {
+            val userList =
+                awaitAll(
+                    async { testUtil.createTestUser(mockMvc, "message_list_user1", "message_list_user1") },
+                    async { testUtil.createTestUser(mockMvc, "message_list_user2", "message_list_user2") },
+                    async { testUtil.createTestUser(mockMvc, "message_list_user3", "message_list_user3") },
+                )
 
-        loginRes3 = testUtil.loginTest(mockMvc, "message_list_user3", "message_list_user3")
+            user1 = userList[0]
+            user2 = userList[1]
+            user3 = userList[2]
 
-        testUtil.sendMessageTest(mockMvc, "message_list_user3", "message_list_user3", user1.id)
-        testUtil.sendMessageTest(mockMvc, "message_list_user3", "message_list_user3", user2.id)
-    }
+            awaitAll(
+                async { testUtil.sendMessageTest(mockMvc, "message_list_user3", "message_list_user3", user1.id) },
+                async { testUtil.sendMessageTest(mockMvc, "message_list_user3", "message_list_user3", user2.id) },
+            )
+
+            loginRes3 = testUtil.loginTest(mockMvc, "message_list_user3", "message_list_user3")
+        }
 
     @Test
     @DisplayName("post /messages/sent")

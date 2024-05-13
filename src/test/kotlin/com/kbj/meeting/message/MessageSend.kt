@@ -6,6 +6,9 @@ import com.kbj.meeting.controller.MessageSendRequest
 import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.entity.MessageLevelEnum
 import com.kbj.meeting.util.JsonUtil
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -33,13 +36,26 @@ class MessageSend() {
     private lateinit var loginRes2: AuthLoginResponse
 
     @BeforeEach
-    fun setup() {
-        user1 = testUtil.createTestUser(mockMvc, "message_user1", "message_user1")
-        user2 = testUtil.createTestUser(mockMvc, "message_user2", "message_user2")
+    fun setup(): Unit =
+        runBlocking {
+            val userList =
+                awaitAll(
+                    async { testUtil.createTestUser(mockMvc, "message_user1", "message_user1") },
+                    async { testUtil.createTestUser(mockMvc, "message_user2", "message_user2") },
+                )
 
-        loginRes1 = testUtil.loginTest(mockMvc, "message_user1", "message_user1")
-        loginRes2 = testUtil.loginTest(mockMvc, "message_user2", "message_user2")
-    }
+            val loginList =
+                awaitAll(
+                    async { testUtil.loginTest(mockMvc, "message_user1", "message_user1") },
+                    async { testUtil.loginTest(mockMvc, "message_user2", "message_user2") },
+                )
+
+            user1 = userList[0]
+            user2 = userList[1]
+
+            loginRes1 = loginList[0]
+            loginRes2 = loginList[1]
+        }
 
     @Test
     @DisplayName("post /messages/send")

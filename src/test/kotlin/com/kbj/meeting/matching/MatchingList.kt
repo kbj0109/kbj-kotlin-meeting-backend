@@ -6,6 +6,9 @@ import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.MatchingRepository
 import com.kbj.meeting.repository.entity.MessageStatusEnum
 import com.kbj.meeting.util.JsonUtil
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -37,35 +40,53 @@ class MatchingList() {
     private lateinit var user3AccessToken: String
 
     @BeforeEach
-    fun setup() {
-        user1 = testUtil.createTestUser(mockMvc, "matching_list_user1", "matching_list_user1")
-        user2 = testUtil.createTestUser(mockMvc, "matching_list_user2", "matching_list_user2")
-        user3 = testUtil.createTestUser(mockMvc, "matching_list_user3", "matching_list_user3")
+    fun setup(): Unit =
+        runBlocking {
+            val userList =
+                awaitAll(
+                    async { testUtil.createTestUser(mockMvc, "matching_list_user1", "matching_list_user1") },
+                    async { testUtil.createTestUser(mockMvc, "matching_list_user2", "matching_list_user2") },
+                    async { testUtil.createTestUser(mockMvc, "matching_list_user3", "matching_list_user3") },
+                )
 
-        user1AccessToken = testUtil.loginTest(mockMvc, "matching_list_user1", "matching_list_user1").accessToken
-        user2AccessToken = testUtil.loginTest(mockMvc, "matching_list_user2", "matching_list_user2").accessToken
-        user3AccessToken = testUtil.loginTest(mockMvc, "matching_list_user3", "matching_list_user3").accessToken
+            user1 = userList[0]
+            user2 = userList[1]
+            user3 = userList[2]
 
-        val message1 = testUtil.sendMessageTest(mockMvc, "matching_list_user1", "matching_list_user1", user2.id)
-        val message2 = testUtil.sendMessageTest(mockMvc, "matching_list_user1", "matching_list_user1", user3.id)
+            val userLoginRes =
+                awaitAll(
+                    async { testUtil.loginTest(mockMvc, "matching_list_user1", "matching_list_user1") },
+                    async { testUtil.loginTest(mockMvc, "matching_list_user2", "matching_list_user2") },
+                    async { testUtil.loginTest(mockMvc, "matching_list_user3", "matching_list_user3") },
+                )
 
-        val data = MessageConfirmRequest(MessageStatusEnum.Accepted.value, "Good to Accept")
-        mockMvc.post("/messages/${message1.id}/confirm") {
-            contentType = MediaType.APPLICATION_JSON
-            content = jsonUtil.stringify(data)
-            header("Authorization", "Bearer $user2AccessToken")
-        }.andExpect {
-            status { isOk() }
+            user1AccessToken = userLoginRes[0].accessToken
+            user2AccessToken = userLoginRes[1].accessToken
+            user3AccessToken = userLoginRes[2].accessToken
+
+            val (message1, message2) =
+                awaitAll(
+                    async { testUtil.sendMessageTest(mockMvc, "matching_list_user1", "matching_list_user1", user2.id) },
+                    async { testUtil.sendMessageTest(mockMvc, "matching_list_user1", "matching_list_user1", user3.id) },
+                )
+
+            val data = MessageConfirmRequest(MessageStatusEnum.Accepted.value, "Good to Accept")
+            mockMvc.post("/messages/${message1.id}/confirm") {
+                contentType = MediaType.APPLICATION_JSON
+                content = jsonUtil.stringify(data)
+                header("Authorization", "Bearer $user2AccessToken")
+            }.andExpect {
+                status { isOk() }
+            }
+
+            mockMvc.post("/messages/${message2.id}/confirm") {
+                contentType = MediaType.APPLICATION_JSON
+                content = jsonUtil.stringify(data)
+                header("Authorization", "Bearer $user3AccessToken")
+            }.andExpect {
+                status { isOk() }
+            }
         }
-
-        mockMvc.post("/messages/${message2.id}/confirm") {
-            contentType = MediaType.APPLICATION_JSON
-            content = jsonUtil.stringify(data)
-            header("Authorization", "Bearer $user3AccessToken")
-        }.andExpect {
-            status { isOk() }
-        }
-    }
 
     @Test
     @DisplayName("GET /matchinges")

@@ -8,6 +8,9 @@ import com.kbj.meeting.controller.UserResponse
 import com.kbj.meeting.repository.MatchingRepository
 import com.kbj.meeting.repository.entity.MessageStatusEnum
 import com.kbj.meeting.util.JsonUtil
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -38,12 +41,20 @@ class MessageConfirm() {
     private lateinit var message: MessageResponse
 
     @BeforeEach
-    fun setup() {
-        user1 = testUtil.createTestUser(mockMvc, "message_confirm_user1", "message_confirm_user1")
-        user2 = testUtil.createTestUser(mockMvc, "message_confirm_user2", "message_confirm_user2")
-        loginRes1 = testUtil.loginTest(mockMvc, "message_confirm_user1", "message_confirm_user1")
-        message = testUtil.sendMessageTest(mockMvc, "message_confirm_user2", "message_confirm_user2", user1.id)
-    }
+    fun setup(): Unit =
+        runBlocking {
+            val userList =
+                awaitAll(
+                    async { testUtil.createTestUser(mockMvc, "message_confirm_user1", "message_confirm_user1") },
+                    async { testUtil.createTestUser(mockMvc, "message_confirm_user2", "message_confirm_user2") },
+                )
+
+            user1 = userList[0]
+            user2 = userList[1]
+
+            loginRes1 = testUtil.loginTest(mockMvc, "message_confirm_user1", "message_confirm_user1")
+            message = testUtil.sendMessageTest(mockMvc, "message_confirm_user2", "message_confirm_user2", user1.id)
+        }
 
     @Test
     @DisplayName("post /messages/confirm")
